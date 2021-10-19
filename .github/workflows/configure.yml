@@ -133,8 +133,9 @@ jobs:
       env: 
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       run: |
-        cp $GITHUB_WORKSPACE/config.txt $GITHUB_WORKSPACE/main
-        cd $GITHUB_WORKSPACE/main
+        mkdir -p Github_Tags
+        cp $GITHUB_WORKSPACE/config.txt $GITHUB_WORKSPACE/Github_Tags
+        cd $GITHUB_WORKSPACE/Github_Tags
         git add .
         git commit -m "同步于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
         git push --force "https://${{ secrets.REPO_TOKEN }}@github.com/281677160/autobuild.git" HEAD:main 
