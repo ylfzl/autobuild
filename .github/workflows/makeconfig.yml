@@ -9,7 +9,7 @@
 # 已经默认启动就打开SSH连接和上传.config配置选择了
 #
 
-name: 生成.config配置文件
+name: 制作.config配置文件专用
 on:
   workflow_dispatch:
 
