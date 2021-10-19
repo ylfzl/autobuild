@@ -61,7 +61,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo -E apt-get -qq update > /dev/null 2>&1
-        sudo -E apt-get -qq install -y $(curl -fsSL git.io/depends-ubuntu-2004) > /dev/null 2>&1
+        sudo -E apt-get -qq install -y gcc, binutils, bzip2, flex, python, perl, make, find, grep, diff, unzip, gawk, getopt, subversion, libz-dev and libc headers > /dev/null 2>&1
         sudo timedatectl set-timezone "Asia/Shanghai"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
