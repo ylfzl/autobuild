@@ -129,3 +129,12 @@ jobs:
         path: config.txt
     
 
+    - name: Upload
+      env: 
+        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      run: |
+        cp $GITHUB_WORKSPACE/config.txt $GITHUB_WORKSPACE/main
+        cd $GITHUB_WORKSPACE/main
+        git add .
+        git commit -m "同步于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
+        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/281677160/autobuild.git" HEAD:main 
