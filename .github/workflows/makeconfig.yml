@@ -95,7 +95,6 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a > /dev/null 2>&1
         mv "$PATH1/$CONFIG_FILE" .config
-        source "${PATH1}/upgrade.sh" && Diy_Part1 > /dev/null 2>&1
         
     - name: SSH远程连接（配置固件）
       uses: danshui-git/debugger-action@master
