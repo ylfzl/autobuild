@@ -1,0 +1,140 @@
+#
+#
+# 感谢p3terx大神的一键编译脚本
+# 
+# Copyright (C) 2019 P3TERX <https://p3terx.com>
+# <https://github.com/P3TERX/Actions-OpenWrt.git>
+#
+name: 编译OpenWrt固件
+on:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH远程'
+        required: false
+        default: 'ssh-actions'
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    name: 编译 "${{matrix.target}}"
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [Lede_source]
+
+        # [Lede_source,Lienol_source,Mortal_source,openwrt_amlogic]
+
+    steps:
+    - name: 准备结束
+      uses: actions/checkout@v2
+
+    - name: 读取脚本设置
+      run: |
+        source "${GITHUB_WORKSPACE}/build/${{matrix.target}}/settings.ini"
+        echo "REPO_URL=${REPO_URL}" >> $GITHUB_ENV
+        echo "REPO_BRANCH=${REPO_BRANCH}" >> $GITHUB_ENV
+        echo "CONFIG_FILE=${CONFIG_FILE}" >> $GITHUB_ENV
+        echo "DIY_PART_SH=${DIY_PART_SH}" >> $GITHUB_ENV
+        echo "SSH_ACTIONS=${SSH_ACTIONS}" >> $GITHUB_ENV
+        echo "UPLOAD_CONFIG=${UPLOAD_CONFIG}" >> $GITHUB_ENV
+    
+    - name: 公 告
+      run: |
+        echo
+        git clone --depth 1 -b main https://github.com/281677160/common build/common > /dev/null 2>&1
+        chmod -R +x "${GITHUB_WORKSPACE}/build/common"
+        
+    - name: 部署编译环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install -y build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 lib32stdc++6 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl rename libpcap0.8-dev swig rsync
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /${{matrix.target}}
+        sudo chown $USER:$GROUPS /${{matrix.target}}
+    
+    - name: 下载"${{matrix.target}}"源码
+      working-directory: /${{matrix.target}}
+      run: |
+        git clone -b "$REPO_BRANCH" --single-branch "$REPO_URL" openwrt
+        cd openwrt
+        ./scripts/feeds update -a > /dev/null 2>&1
+        ln -sf /${{matrix.target}}/openwrt $GITHUB_WORKSPACE/openwrt
+        echo "Home=${GITHUB_WORKSPACE}/openwrt" >> $GITHUB_ENV
+        echo "PATH1=${GITHUB_WORKSPACE}/openwrt/build/${{matrix.target}}" >> $GITHUB_ENV
+ 
+    - name: 加载源,补丁和自定义设置
+      run: |
+        echo "Compile_Date=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+        cp -Rf `find ./ -maxdepth 1 -type d ! -path './openwrt' ! -path './'` openwrt
+        mv -f "${Home}"/build/common/*.sh "${PATH1}"
+        source "${PATH1}/common.sh" && Diy_settings
+        cd openwrt
+        if [[ "${REPO_BRANCH}" == "master" ]]; then
+          source "${PATH1}/common.sh" && Diy_lede
+        elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
+          source "${PATH1}/common.sh" && Diy_lienol
+        elif [[ "${REPO_BRANCH}" == "openwrt-21.02" ]]; then
+          source "${PATH1}/common.sh" && Diy_mortal
+        fi
+        source "${PATH1}/common.sh" && Diy_all
+        /bin/bash "${PATH1}/$DIY_PART_SH"
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a > /dev/null 2>&1
+        mv "$PATH1/$CONFIG_FILE" .config
+        if [[ "${REGULAR_UPDATE}" == "true" ]]; then
+          source "${PATH1}/upgrade.sh" && Diy_Part1
+        fi
+        
+    - name: SSH远程连接（配置固件）
+      if: env.SSH_ACTIONS == 'true' || (github.event.inputs.ssh == 'ssh' && github.event.inputs.ssh  != 'false')
+      uses: danshui-git/debugger-action@master
+      env:
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+    - name: 生成配置文件
+      run: |
+        cd openwrt
+        source "${PATH1}/common.sh" && Diy_chajian > /dev/null 2>&1
+        make defconfig > /dev/null 2>&1
+        ./scripts/diffconfig.sh > ${GITHUB_WORKSPACE}/config.txt
+        echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
+        echo "TARGET_SUBTARGET=$(awk -F '[="]+' '/TARGET_SUBTARGET/{print $2}' .config)" >> $GITHUB_ENV
+        if [ `grep -c "CONFIG_TARGET_x86_64=y" .config` -eq '1' ]; then
+         echo "TARGET_PROFILE=x86-64" >> $GITHUB_ENV
+        elif [ `grep -c "CONFIG_TARGET_x86_generic=y" .config` -eq '1' ]; then
+         echo "TARGET_PROFILE=x86-32" >> $GITHUB_ENV
+        elif [ `grep -c "CONFIG_TARGET.*DEVICE.*=y" .config` -eq '1' ]; then
+          grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+          [ -s DEVICE_NAME ] && echo "TARGET_PROFILE=$(cat DEVICE_NAME)" >> $GITHUB_ENV
+        else
+          echo "TARGET_PROFILE=armvirt" >> $GITHUB_ENV
+        fi
+        
+    - name: 编译信息
+      run: |
+        cd openwrt
+        source "${PATH1}/common.sh" && Diy_chuli > /dev/null 2>&1
+        if [ "${REGULAR_UPDATE}" == "true" ]; then
+          source "${PATH1}/upgrade.sh" && Diy_Part2 > /dev/null 2>&1
+        fi
+        if [ "${BY_INFORMATION}" == "true" ]; then
+          source "${PATH1}/upgrade.sh" && GET_TARGET_INFO
+          source "${PATH1}/common.sh" && Diy_xinxi
+        fi
+    
+    - name: 上传.config配置文件在 github actions
+      if: env.UPLOAD_CONFIG == 'true'
+      uses: actions/upload-artifact@v2
+      with:
+        name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
+        path: config.txt
