@@ -81,7 +81,7 @@ jobs:
         echo "Compile_Date=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
         cp -Rf `find ./ -maxdepth 1 -type d ! -path './openwrt' ! -path './'` openwrt
         mv -f "${Home}"/build/common/*.sh "${PATH1}"
-        source "${PATH1}/common.sh" && Diy_settings
+        source "${PATH1}/common.sh" && Diy_settings > /dev/null 2>&1
         cd openwrt
         if [[ "${REPO_BRANCH}" == "master" ]]; then
           source "${PATH1}/common.sh" && Diy_lede > /dev/null 2>&1
@@ -95,7 +95,7 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a > /dev/null 2>&1
         mv "$PATH1/$CONFIG_FILE" .config
-        source "${PATH1}/upgrade.sh" && Diy_Part1
+        source "${PATH1}/upgrade.sh" && Diy_Part1 > /dev/null 2>&1
         
     - name: SSH远程连接（配置固件）
       uses: danshui-git/debugger-action@master
