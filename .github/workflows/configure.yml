@@ -147,6 +147,9 @@ jobs:
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/${{github.repository}}.git main
         cd main
+        export TARGE="$(cat .github/workflows/configure.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
+        export TARGE2="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
+        sed -i "s/${TARGE2}/${TARGE}/g" .github/workflows/build-openwrt.yml
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
