@@ -156,4 +156,4 @@ jobs:
         git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
         if [[ ! $? == 0 ]]; then
           echo "配置文件无更新"
-        
+        fi
