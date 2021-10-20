@@ -158,6 +158,7 @@ jobs:
         else
           echo "正在更新${{matrix.target}}文件夹的${CONFIG_FILE}配置文件!"
           git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
+          echo "更新完毕!"
         fi
         
 
