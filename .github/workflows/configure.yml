@@ -82,7 +82,6 @@ jobs:
  
     - name: 加载源,补丁和自定义设置
       run: |
-        echo "Compile_Date=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
         cp -Rf `find ./ -maxdepth 1 -type d ! -path './openwrt' ! -path './'` openwrt
         echo "111111"
         mv -f "${Home}"/build/common/*.sh "${PATH1}"
@@ -120,6 +119,7 @@ jobs:
         cp -r ${GITHUB_WORKSPACE}/${CONFIG_FILE} ${GITHUB_WORKSPACE}/config.txt
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
         echo "TARGET_SUBTARGET=$(awk -F '[="]+' '/TARGET_SUBTARGET/{print $2}' .config)" >> $GITHUB_ENV
+        echo "Compile_Date=$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
         if [ `grep -c "CONFIG_TARGET_x86_64=y" .config` -eq '1' ]; then
          echo "TARGET_PROFILE=x86-64" >> $GITHUB_ENV
         elif [ `grep -c "CONFIG_TARGET_x86_generic=y" .config` -eq '1' ]; then
@@ -142,12 +142,12 @@ jobs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
         cd $GITHUB_WORKSPACE
-        git clone -b main https://github.com/281677160/autobuild.git main
+        git clone -b main https://github.com/${{github.repository}}.git main
         cd $GITHUB_WORKSPACE/main
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         cd $GITHUB_WORKSPACE/main
         git add .
-        git commit -m "配置文件更新于$(TZ='${{env.TZ}}' date +%Y年%m月%d号-%H点%M分)"
-        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/281677160/autobuild.git" HEAD:main
+        git commit -m "配置文件更新于$(date +%Y年%m月%d号-%H点%M分)"
+        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}.git" HEAD:main
