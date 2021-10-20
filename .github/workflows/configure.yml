@@ -142,7 +142,7 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
         
-    - name: 跟随configure.yml上的机型配置，同步到build-openwrt.yml文件上
+    - name: 更新build-openwrt.yml文件，用于跟随修改.config随机启动编译
       run: |
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/${{github.repository}}.git main
