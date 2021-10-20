@@ -172,10 +172,12 @@ jobs:
         git add .
         git commit -m "${{env.CODE}}配置文件更新于$(date +%Y年%m月%d号-%H点%M分)" |tee build.log
         if [[ `grep -c "working tree clean" build.log` -eq '1' ]]; then
+          rm -fr build.log
           echo "配置文件无更新,所以无需要覆盖!"
           echo "配置文件无更新,所以无需要覆盖!"
         else
           echo "正在更新${{matrix.target}}文件夹的${CONFIG_FILE}配置文件!"
+          echo "$(date +%Y年%m月%d号-%H点%M分)启动编译!" > build.log
           git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
           echo "更新完毕!"
         fi
