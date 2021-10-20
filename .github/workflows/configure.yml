@@ -170,7 +170,7 @@ jobs:
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         git add .
-        git commit -m "${{env.CODE}" |tee build.log
+        git commit -m "${CONFIG_FILE}" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
           echo "配置文件无更新,所以无需要覆盖!"
         else
