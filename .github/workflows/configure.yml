@@ -153,7 +153,7 @@ jobs:
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         git add .
         git commit -m "${{env.CODE}}配置文件更新于$(date +%Y年%m月%d号-%H点%M分)"
-        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
-        if [[ ! $? == 0 ]]; then
-          echo "配置文件无更新"
+        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main |tee build.log
+        if [[ `grep -c "working tree clean" build.log` -eq '1' ]]; then
+          echo "配置文件无更新,所以不需要覆盖!"
         fi
