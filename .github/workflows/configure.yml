@@ -14,7 +14,6 @@
 #
 #
 
-
 name: 配置.config文件
 on:
   workflow_dispatch:
@@ -22,6 +21,7 @@ on:
 env: 
  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
  TZ: Asia/Shanghai
+ TAT: Lede_source
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Lede_source,Lienol_source,Mortal_source,openwrt_amlogic]
+        target: ["${{ env.TAT }}"]
 
         # [Lede_source,Lienol_source,Mortal_source,openwrt_amlogic]
 
