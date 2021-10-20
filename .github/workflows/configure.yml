@@ -8,6 +8,8 @@
 #
 # 配置完成后会自动上传一份.config文件，下载下来，覆盖到对应的源码上的.config就可以编译了
 #
+# 如果配置了REPO_TOKEN密匙的话，则会把.config文件自动覆盖到对应源码文件夹的.config中，免除手动覆盖
+#
 
 name: 配置.config文件
 on:
@@ -103,7 +105,7 @@ jobs:
         ./scripts/feeds install -a > /dev/null 2>&1
         [[ -e "$PATH1/$CONFIG_FILE" ]] && mv "$PATH1/$CONFIG_FILE" .config
         
-    - name: SSH远程连接（制作${{env.CONFIG_FILE}}配置文件）
+    - name: SSH远程连接（制作.config配置文件）
       uses: danshui-git/debugger-action@master
       env:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -129,13 +131,13 @@ jobs:
           echo "TARGET_PROFILE=armvirt" >> $GITHUB_ENV
         fi
         
-    - name: 上传${{env.CONFIG_FILE}}配置文件在 github actions
+    - name: 上传.config配置文件在 github actions
       uses: actions/upload-artifact@v2
       with:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
     
-    - name: 自动把${{env.CONFIG_FILE}}配置文件覆盖到对应源码文件夹
+    - name: 自动把新配置的.config配置文件覆盖到对应源码文件夹的.config
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
