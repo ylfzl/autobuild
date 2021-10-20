@@ -80,12 +80,16 @@ jobs:
       run: |
         echo "Compile_Date=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
         cp -Rf `find ./ -maxdepth 1 -type d ! -path './openwrt' ! -path './'` openwrt
+        echo "111111"
         mv -f "${Home}"/build/common/*.sh "${PATH1}"
         source "${PATH1}/common.sh" && Diy_settings > /dev/null 2>&1
+        echo "222222222"
         cd openwrt
         git clone https://github.com/281677160/luci-app-autoupdate package/luci-app-autoupdate
+        echo "33333333333"
         if [[ "${REPO_BRANCH}" == "master" ]]; then
           source "${PATH1}/common.sh" && Diy_lede > /dev/null 2>&1
+          echo "4444444444"
         elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
           source "${PATH1}/common.sh" && Diy_lienol > /dev/null 2>&1
         elif [[ "${REPO_BRANCH}" == "openwrt-21.02" ]]; then
