@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-18.04
     if: github.event.repository.owner.id == github.event.sender.id
 
-    name: 编译 "${{matrix.target}}"
+    name: 生成"${{matrix.target}}"配置文件
     strategy:
       fail-fast: false
       matrix:
@@ -103,13 +103,13 @@ jobs:
         ./scripts/feeds install -a > /dev/null 2>&1
         [[ -e "$PATH1/$CONFIG_FILE" ]] && mv "$PATH1/$CONFIG_FILE" .config
         
-    - name: SSH远程连接（制作.config配置文件）
+    - name: SSH远程连接（制作${{env.CONFIG_FILE}}配置文件）
       uses: danshui-git/debugger-action@master
       env:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
-    - name: 生成配置文件
+    - name: 生成"${{matrix.target}}"配置文件
       run: |
         cd openwrt
         make defconfig > /dev/null 2>&1
@@ -129,13 +129,13 @@ jobs:
           echo "TARGET_PROFILE=armvirt" >> $GITHUB_ENV
         fi
         
-    - name: 上传.config配置文件在 github actions
+    - name: 上传${{env.CONFIG_FILE}}配置文件在 github actions
       uses: actions/upload-artifact@v2
       with:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
     
-    - name: 自动把.config配置文件覆盖到对应源码文件夹
+    - name: 自动把${{env.CONFIG_FILE}}配置文件覆盖到对应源码文件夹
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
