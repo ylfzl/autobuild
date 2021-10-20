@@ -151,7 +151,7 @@ jobs:
         export QIDONG="$(grep -A 1 'paths:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed -e 's/^[ ]*//g')"
         export TARGE2="target: \\["${Modelfile}"\\]"
         sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
-        sed -i "s/${QIDONG}/- 'build/${Modelfile}/${CONFIG_FILE}'/g" .github/workflows/build-openwrt.yml
+        sed -i "s/${QIDONG}/- 'build\/${Modelfile}\/${CONFIG_FILE}'/g" .github/workflows/build-openwrt.yml
         git add .
         git commit -m "build-openwrt.yml更新于$(date +%Y年%m月%d号-%H点%M分)" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
