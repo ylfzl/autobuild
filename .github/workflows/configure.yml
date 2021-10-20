@@ -69,7 +69,7 @@ jobs:
         echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
         echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
         
-    - name: 部署编译环境
+    - name: 部署制作.config文件环境
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
