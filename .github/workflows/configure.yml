@@ -21,7 +21,7 @@ on:
 env: 
  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
  TZ: Asia/Shanghai
- TAT: Lede_source
+ TAT: Lede_source,Lienol_source,Mortal_source,openwrt_amlogic
 
 jobs:
   build:
