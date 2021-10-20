@@ -149,7 +149,7 @@ jobs:
         cd $GITHUB_WORKSPACE/main
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
-        cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} $GITHUB_WORKSPACE/build/${{matrix.target}}/${CONFIG_FILE}
+        cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
     
     - name: Upload
       env: 
