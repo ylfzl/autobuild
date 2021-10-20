@@ -175,7 +175,7 @@ jobs:
           echo "配置文件无更新,所以无需要覆盖!"
         else
           rm -fr build.log
-          mkdir -p build/${Modelfile}/start-up/start
+          mkdir -p build/${Modelfile}/start-up
           echo "${{env.CODE}}于$(date +%Y年%m月%d号-%H点%M分)启动编译" > build/${Modelfile}/start-up/start
           echo "正在更新${{matrix.target}}文件夹的${CONFIG_FILE}配置文件!"
           git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
