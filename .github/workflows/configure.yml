@@ -186,7 +186,7 @@ jobs:
         
     - name: build-openwrt.yml和configure.yml机型同步，方便不更新配置时编译用
       run: |
-        sleep 5
+        sleep 3
         cd $GITHUB_WORKSPACE/main
         export YMLTARGE="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
         export YMLTARGE2="$(cat .github/workflows/configure.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
