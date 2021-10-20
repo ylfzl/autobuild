@@ -145,15 +145,17 @@ jobs:
     - name: Clone packages
       run: |
         cd $GITHUB_WORKSPACE
-        svn co https://github.com/281677160/autobuild/trunk/build $GITHUB_WORKSPACE/build
-        cd $GITHUB_WORKSPACE/build/${{matrix.target}}
+        git clone -b main https://github.com/281677160/autobuild.git main
+        cd $GITHUB_WORKSPACE/main
+        rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
+        git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} $GITHUB_WORKSPACE/build/${{matrix.target}}/${CONFIG_FILE}
     
     - name: Upload
       env: 
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       run: |
-        cd $GITHUB_WORKSPACE/build/${{matrix.target}}
+        cd $GITHUB_WORKSPACE/main
         git add .
         git commit -m "同步源码于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
-        git push -n "https://${{ secrets.REPO_TOKEN }}@github.com/281677160/autobuild.git" main:main
+        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/281677160/autobuild.git" HEAD:main
