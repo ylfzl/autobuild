@@ -184,4 +184,17 @@ jobs:
           echo "更新完毕!"
         fi
         
+    - name: build-openwrt.yml和configure.yml机型同步，方便不更新配置时编译用
+      run: |
+        cd $GITHUB_WORKSPACE/main
+        export TARGE="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
+        export TARGE="$(cat .github/workflows/configure.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
+        sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
+        git add .
+        git commit -m "Update build-openwrt.yml" |tee build.log
+        if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
+        else
+          rm -fr build.log
+          git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
+        fi
 
