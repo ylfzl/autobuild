@@ -139,6 +139,26 @@ jobs:
       with:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
+        
+    - name: 跟随configure.yml上的机型配置，同步到build-openwrt.yml文件上
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        cd $GITHUB_WORKSPACE
+        git clone -b main https://github.com/${{github.repository}}.git yaml
+        cd yaml
+        export TARGE="$(cat .github/workflows/configure.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
+        export TARGE2="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
+        sed -i "s/${TARGE2}/${TARGE}/g" .github/workflows/build-openwrt.yml
+        git add .
+        git commit -m "build-openwrt.yml更新于$(date +%Y年%m月%d号-%H点%M分)" |tee build.log
+        if [[ `grep -c "working tree clean" build.log` -eq '1' ]]; then
+          echo "配置文件无更新,所以无需要覆盖!"
+        else
+          echo "正在更新build-openwrt.yml文件!"
+          git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
+          echo "更新完毕!"
+        fi
     
     - name: 把新配置的.config配置文件自动覆盖到${{matrix.target}}文件夹的.config
       run: |
@@ -147,9 +167,6 @@ jobs:
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/${{github.repository}}.git main
         cd main
-        export TARGE="$(cat .github/workflows/configure.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
-        export TARGE2="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
-        sed -i "s/${TARGE2}/${TARGE}/g" .github/workflows/build-openwrt.yml
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
