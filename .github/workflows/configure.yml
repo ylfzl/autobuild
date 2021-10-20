@@ -141,7 +141,7 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
     
-    - name: 自动把新配置的.config配置文件覆盖到对应源码文件夹的.config
+    - name: 把新配置的.config配置文件自动覆盖到${{matrix.target}}文件夹的.config
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
@@ -154,8 +154,10 @@ jobs:
         git add .
         git commit -m "${{env.CODE}}配置文件更新于$(date +%Y年%m月%d号-%H点%M分)" |tee build.log
         if [[ `grep -c "working tree clean" build.log` -eq '1' ]]; then
-          echo "配置文件无更新,所以不需要覆盖!"
+          echo "配置文件无更新,所以无需要覆盖!"
+          echo "配置文件无更新,所以无需要覆盖!"
         else
+          echo "正在更新${{matrix.target}}文件夹的${CONFIG_FILE}配置文件!"
           git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
         fi
         
