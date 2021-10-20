@@ -148,13 +148,16 @@ jobs:
         git clone -b main https://github.com/${{github.repository}}.git main
         cd main
         export TARGE="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
+        export QIDONG="$(grep -A 1 'paths:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed -e 's/^[ ]*//g')"
         export TARGE2="target: \\["${Modelfile}"\\]"
         sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
+        sed -i "s/${QIDONG}/- 'build/${Modelfile}/${CONFIG_FILE}'/g" .github/workflows/build-openwrt.yml
         git add .
         git commit -m "build-openwrt.yml更新于$(date +%Y年%m月%d号-%H点%M分)" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
           echo "配置文件无更新,所以无需要覆盖!"
         else
+          rm -fr build.log
           echo "正在更新build-openwrt.yml文件!"
           git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
           echo "更新完毕!"
@@ -169,11 +172,10 @@ jobs:
         git add .
         git commit -m "${{env.CODE}}配置文件更新于$(date +%Y年%m月%d号-%H点%M分)" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
-          rm -fr build.log
           echo "配置文件无更新,所以无需要覆盖!"
         else
+          rm -fr build.log
           echo "正在更新${{matrix.target}}文件夹的${CONFIG_FILE}配置文件!"
-          echo "$(date +%Y年%m月%d号-%H点%M分)启动编译!" > build.log
           git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
           echo "更新完毕!"
         fi
