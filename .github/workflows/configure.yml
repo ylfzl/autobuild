@@ -95,7 +95,6 @@ jobs:
         mv -f "${Home}"/build/common/*.sh "${PATH1}"
         source "${PATH1}/common.sh" && Diy_settings
         cd openwrt
-        git clone https://github.com/281677160/luci-app-autoupdate package/luci-app-autoupdate
         if [[ "${REPO_BRANCH}" == "master" ]]; then
           source "${PATH1}/common.sh" && Diy_lede > /dev/null 2>&1
         elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
@@ -118,7 +117,7 @@ jobs:
     - name: 生成"${{matrix.target}}"配置文件
       run: |
         cd openwrt
-        make defconfig > /dev/null 2>&1
+        make defconfig
         ./scripts/diffconfig.sh > ${GITHUB_WORKSPACE}/${CONFIG_FILE}
         cp -r ${GITHUB_WORKSPACE}/${CONFIG_FILE} ${GITHUB_WORKSPACE}/config.txt
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
