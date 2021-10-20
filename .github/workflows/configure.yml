@@ -141,9 +141,11 @@ jobs:
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
-        mkdir -p $GITHUB_WORKSPACE/build/${{matrix.target}}
+        mkdir -p $GITHUB_WORKSPACE/build
+        svn co https://github.com/${{github.repository}}/trunk/build/${{matrix.target}} $GITHUB_WORKSPACE/build/${{matrix.target}}
+        rm -fr $GITHUB_WORKSPACE/build/${{matrix.target}}/.svn
         cp $GITHUB_WORKSPACE/${CONFIG_FILE} $GITHUB_WORKSPACE/build/${{matrix.target}}/${CONFIG_FILE}
         cd $GITHUB_WORKSPACE/build/${{matrix.target}}
-        git add ${CONFIG_FILE}
-        git commit -m "更新于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
+        git add .
+        git commit -m "同步于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
         git push -f "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}.git" main:main 
