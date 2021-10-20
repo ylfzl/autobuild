@@ -147,8 +147,6 @@ jobs:
         cd $GITHUB_WORKSPACE
         svn co https://github.com/281677160/autobuild/trunk/build $GITHUB_WORKSPACE/build
         cd $GITHUB_WORKSPACE/build/${{matrix.target}}
-        rm -Rf ${CONFIG_FILE}
-        git rm --cache *
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} $GITHUB_WORKSPACE/build/${{matrix.target}}/${CONFIG_FILE}
     
     - name: Upload
