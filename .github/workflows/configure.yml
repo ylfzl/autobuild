@@ -47,7 +47,10 @@ jobs:
         echo
         git clone --depth 1 -b main https://github.com/281677160/common build/common > /dev/null 2>&1
         chmod -R +x "${GITHUB_WORKSPACE}/build/common"
-        if [[ "${REPO_BRANCH}" == "master" ]]; then
+        if [[ "${{matrix.target}}" == "openwrt_amlogic" ]]; then
+          echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
+          echo "CODE=openwrt_amlogic" >> $GITHUB_ENV
+        elif [[ "${REPO_BRANCH}" == "master" ]]; then
           echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
           echo "CODE=Lede" >> $GITHUB_ENV
         elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
@@ -83,16 +86,12 @@ jobs:
     - name: 加载源,补丁和自定义设置
       run: |
         cp -Rf `find ./ -maxdepth 1 -type d ! -path './openwrt' ! -path './'` openwrt
-        echo "111111"
         mv -f "${Home}"/build/common/*.sh "${PATH1}"
         source "${PATH1}/common.sh" && Diy_settings
-        echo "222222222"
         cd openwrt
         git clone https://github.com/281677160/luci-app-autoupdate package/luci-app-autoupdate
-        echo "33333333333"
         if [[ "${REPO_BRANCH}" == "master" ]]; then
           source "${PATH1}/common.sh" && Diy_lede > /dev/null 2>&1
-          echo "4444444444"
         elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
           source "${PATH1}/common.sh" && Diy_lienol > /dev/null 2>&1
         elif [[ "${REPO_BRANCH}" == "openwrt-21.02" ]]; then
@@ -102,8 +101,7 @@ jobs:
         /bin/bash "${PATH1}/$DIY_PART_SH"
         ./scripts/feeds update -a > /dev/null 2>&1
         ./scripts/feeds install -a > /dev/null 2>&1
-        echo "1234566"
-        mv "$PATH1/$CONFIG_FILE" .config
+        [[ -e "$PATH1/$CONFIG_FILE" ]] && mv "$PATH1/$CONFIG_FILE" .config
         
     - name: SSH远程连接（制作.config配置文件）
       uses: danshui-git/debugger-action@master
@@ -143,11 +141,10 @@ jobs:
         git config --global user.name "github-actions[bot]"
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/${{github.repository}}.git main
-        cd $GITHUB_WORKSPACE/main
+        cd main
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
-        cd $GITHUB_WORKSPACE/main
         git add .
         git commit -m "配置文件更新于$(date +%Y年%m月%d号-%H点%M分)"
-        git push --quiet "${{github.repository}}" HEAD:main
+        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
