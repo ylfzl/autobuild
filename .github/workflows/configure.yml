@@ -154,6 +154,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       run: |
         cd $GITHUB_WORKSPACE/build/${{matrix.target}}
-        git add .
         git commit -m "同步源码于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
         git push -f "https://${{ secrets.REPO_TOKEN }}@github.com/281677160/autobuild.git" HEAD:main
