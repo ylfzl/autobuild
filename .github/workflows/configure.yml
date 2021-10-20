@@ -148,7 +148,7 @@ jobs:
         git clone -b main https://github.com/${{github.repository}}.git main
         cd main
         export TARGE="$(cat .github/workflows/configure.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
-        export TARGE2="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
+        export TARGE2="$(target: \["${Modelfile}"\])"
         sed -i "s/${TARGE2}/${TARGE}/g" .github/workflows/build-openwrt.yml
         git add .
         git commit -m "build-openwrt.yml更新于$(date +%Y年%m月%d号-%H点%M分)" |tee build.log
