@@ -148,7 +148,7 @@ jobs:
         git clone -b main https://github.com/${{github.repository}}.git main
         cd main
         export TARGE="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
-        export QIDONG="$(grep -A 1 'paths:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed -e 's/^[ ]*//g')"
+        export QIDONG="$(grep -A 1 'paths:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed -e 's/^[ ]*//g' |sed  's/\//\\&/g')"
         export TARGE2="target: \\["${Modelfile}"\\]"
         sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
         sed -i "s/${QIDONG}/- 'build\/${Modelfile}\/${CONFIG_FILE}'/g" .github/workflows/build-openwrt.yml
