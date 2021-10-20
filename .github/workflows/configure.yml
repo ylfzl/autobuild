@@ -153,7 +153,7 @@ jobs:
         sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
         sed -i "s/${QIDONG}/- 'build\/${Modelfile}\/${CONFIG_FILE}'/g" .github/workflows/build-openwrt.yml
         git add .
-        git commit -m "build-openwrt.yml更新于$(date +%Y年%m月%d号-%H点%M分)" |tee build.log
+        git commit -m "Update build-openwrt.yml" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
           echo "配置文件无更新,所以无需要覆盖!"
         else
