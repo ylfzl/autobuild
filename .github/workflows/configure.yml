@@ -154,3 +154,6 @@ jobs:
         git add .
         git commit -m "${{env.CODE}}配置文件更新于$(date +%Y年%m月%d号-%H点%M分)"
         git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
+        if [[ ! $? == 0 ]]; then
+          echo "配置文件无更新"
+        
