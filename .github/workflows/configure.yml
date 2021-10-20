@@ -83,6 +83,7 @@ jobs:
         mv -f "${Home}"/build/common/*.sh "${PATH1}"
         source "${PATH1}/common.sh" && Diy_settings > /dev/null 2>&1
         cd openwrt
+        git clone https://github.com/281677160/luci-app-autoupdate package/luci-app-autoupdate
         if [[ "${REPO_BRANCH}" == "master" ]]; then
           source "${PATH1}/common.sh" && Diy_lede > /dev/null 2>&1
         elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
@@ -95,7 +96,6 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a > /dev/null 2>&1
         mv "$PATH1/$CONFIG_FILE" .config
-        source "${PATH1}/upgrade.sh" && Diy_Part1 > /dev/null 2>&1
         
     - name: SSH远程连接（制作.config配置文件）
       uses: danshui-git/debugger-action@master
