@@ -151,7 +151,7 @@ jobs:
         export QIDONG="$(grep -A 1 'paths:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed -e 's/^[ ]*//g' |sed  's/\//\\&/g')"
         export TARGE2="target: \\["${Modelfile}"\\]"
         sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
-        sed -i "s/${QIDONG}/- 'build\/${Modelfile}\/${CONFIG_FILE}'/g" .github/workflows/build-openwrt.yml
+        sed -i "s/${QIDONG}/- 'build\/${Modelfile}\/start-up\/start'/g" .github/workflows/build-openwrt.yml
         git add .
         git commit -m "Update build-openwrt.yml" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
@@ -175,6 +175,8 @@ jobs:
           echo "配置文件无更新,所以无需要覆盖!"
         else
           rm -fr build.log
+          mkdir -p build/${Modelfile}/start-up/start
+          echo "${{env.CODE}}于$(date +%Y年%m月%d号-%H点%M分)启动编译" > build/${Modelfile}/start-up/start
           echo "正在更新${{matrix.target}}文件夹的${CONFIG_FILE}配置文件!"
           git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
           echo "更新完毕!"
