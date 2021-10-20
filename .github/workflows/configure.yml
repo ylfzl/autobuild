@@ -61,7 +61,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo -E apt-get -qq update > /dev/null 2>&1
-        sudo -E apt-get -qq install -y subversion build-essential libncurses5-dev zlib1g-dev gawk git ccache gettext libssl-dev xsltproc zip > /dev/null 2>&1
+        sudo -E apt-get -qq install -y subversion build-essential libncurses5-dev zlib1g-dev gawk git ccache gettext libssl-dev xsltproc zip git-core wget curl grep > /dev/null 2>&1
         sudo timedatectl set-timezone "Asia/Shanghai"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
@@ -135,17 +135,27 @@ jobs:
         path: config.txt
     
 
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+    
+    - name: Clone packages
+      run: |
+        cd $GITHUB_WORKSPACE
+        svn co https://github.com/281677160/autobuild/trunk/build $GITHUB_WORKSPACE/build
+        cd $GITHUB_WORKSPACE/build/${{matrix.target}}
+        rm -Rf ${CONFIG_FILE}
+        git rm --cache *
+        cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} $GITHUB_WORKSPACE/build/${{matrix.target}}/${CONFIG_FILE}
+    
     - name: Upload
       env: 
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       run: |
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-        mkdir -p $GITHUB_WORKSPACE/build
-        svn co https://github.com/${{github.repository}}/trunk/build/${{matrix.target}} $GITHUB_WORKSPACE/build/${{matrix.target}}
-        rm -fr $GITHUB_WORKSPACE/build/${{matrix.target}}/.svn
-        cp $GITHUB_WORKSPACE/${CONFIG_FILE} $GITHUB_WORKSPACE/build/${{matrix.target}}/${CONFIG_FILE}
         cd $GITHUB_WORKSPACE/build/${{matrix.target}}
         git add .
-        git commit -m "同步于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
-        git push -f "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}.git" main:main 
+        git commit -m "同步源码于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
+        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/281677160/autobuild.git" HEAD:${{matrix.target}} 
