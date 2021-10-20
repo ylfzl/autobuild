@@ -144,5 +144,5 @@ jobs:
         cp $GITHUB_WORKSPACE/${CONFIG_FILE} $GITHUB_WORKSPACE/build/${{matrix.target}}/${CONFIG_FILE}
         cd $GITHUB_WORKSPACE/build/${{matrix.target}}
         git add ${CONFIG_FILE}
-        git commit -m "同步于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
-        git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}.git" HEAD:main 
+        git commit -m "更新于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
+        git push --force "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}.git" HEAD:main 
