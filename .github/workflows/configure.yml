@@ -46,15 +46,16 @@ jobs:
         echo "REPO_BRANCH=${REPO_BRANCH}" >> $GITHUB_ENV
         echo "CONFIG_FILE=${CONFIG_FILE}" >> $GITHUB_ENV
         echo "DIY_PART_SH=${DIY_PART_SH}" >> $GITHUB_ENV
+        echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
 
     - name: 读取扩展文件
       run: |
         echo
         git clone --depth 1 -b main https://github.com/281677160/common build/common > /dev/null 2>&1
         chmod -R +x "${GITHUB_WORKSPACE}/build/common"
-        if [[ "${{matrix.target}}" == "amlogic" ]]; then
+        if [[ "${Modelfile}" == "openwrt_amlogic" ]]; then
           echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
-          echo "CODE=openwrt_amlogic" >> $GITHUB_ENV
+          echo "CODE=amlogic" >> $GITHUB_ENV
         elif [[ "${REPO_BRANCH}" == "master" ]]; then
           echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
           echo "CODE=Lede" >> $GITHUB_ENV
