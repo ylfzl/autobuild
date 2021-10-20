@@ -146,5 +146,5 @@ jobs:
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         git add .
-        git commit -m "配置文件更新于$(date +%Y年%m月%d号-%H点%M分)"
+        git commit -m "${{env.CODE}}配置文件更新于$(date +%Y年%m月%d号-%H点%M分)"
         git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
