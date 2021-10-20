@@ -10,6 +10,10 @@
 #
 # 如果配置了REPO_TOKEN密匙的话，则会把.config文件自动覆盖到对应源码文件夹的.config中，免除手动覆盖
 #
+# REPO_TOKEN密匙制作教程：https://git.io/jm.md
+#
+#
+
 
 name: 配置.config文件
 on:
