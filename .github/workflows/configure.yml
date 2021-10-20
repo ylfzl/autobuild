@@ -13,6 +13,10 @@ name: 配置.config文件
 on:
   workflow_dispatch:
 
+env: 
+ REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+ TZ: Asia/Shanghai
+
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -62,7 +66,7 @@ jobs:
       run: |
         sudo -E apt-get -qq update > /dev/null 2>&1
         sudo -E apt-get -qq install -y subversion build-essential libncurses5-dev zlib1g-dev gawk git ccache gettext libssl-dev xsltproc zip git-core wget curl grep > /dev/null 2>&1
-        sudo timedatectl set-timezone "Asia/Shanghai"
+        sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
     
@@ -97,7 +101,7 @@ jobs:
         fi
         source "${PATH1}/common.sh" && Diy_all > /dev/null 2>&1
         /bin/bash "${PATH1}/$DIY_PART_SH"
-        ./scripts/feeds update -a
+        ./scripts/feeds update -a > /dev/null 2>&1
         ./scripts/feeds install -a > /dev/null 2>&1
         echo "1234566"
         mv "$PATH1/$CONFIG_FILE" .config
@@ -111,7 +115,6 @@ jobs:
     - name: 生成配置文件
       run: |
         cd openwrt
-        source "${PATH1}/common.sh" && Diy_chajian > /dev/null 2>&1
         make defconfig > /dev/null 2>&1
         ./scripts/diffconfig.sh > ${GITHUB_WORKSPACE}/${CONFIG_FILE}
         cp -r ${GITHUB_WORKSPACE}/${CONFIG_FILE} ${GITHUB_WORKSPACE}/config.txt
@@ -134,28 +137,17 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
     
-
-    - name: Initialization environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
+    - name: 自动把.config配置文件覆盖到对应源码文件夹
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
-    
-    - name: Clone packages
-      run: |
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/281677160/autobuild.git main
         cd $GITHUB_WORKSPACE/main
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
-    
-    - name: Upload
-      env: 
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-      run: |
         cd $GITHUB_WORKSPACE/main
         git add .
-        git commit -m "同步源码于$(TZ='Asia/Shanghai' date +%Y年%m月%d号-%H点%M分)"
+        git commit -m "配置文件更新于$(TZ='$TZ' date +%Y年%m月%d号-%H点%M分)"
         git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/281677160/autobuild.git" HEAD:main
