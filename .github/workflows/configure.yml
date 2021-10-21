@@ -147,7 +147,7 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
         
-    - name: 更新build-openwrt.yml文件，用于修改.config后启动"${{matrix.target}}"编译（需要密匙和true-actions改成true）
+    - name: 修改build-openwrt.yml文件，用于.config有更新时启动"${{matrix.target}}"编译（需要密匙和true-actions改成true）
       if: env.REPO_TOKEN && (github.event.inputs.config == 'true' && github.event.inputs.config  != 'false')
       run: |
         cd $GITHUB_WORKSPACE
