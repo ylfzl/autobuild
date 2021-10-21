@@ -44,17 +44,15 @@ jobs:
     runs-on: Ubuntu-20.04
     name: 清理仓库或重新FORK上游仓库
     steps:
-    
-    - name: 准备结束
+    - name: Checkout
       uses: actions/checkout@v2
     
-    
-    - name: 部署环境
+    - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo -E apt-get -qq update > /dev/null 2>&1
-        sudo -E apt-get -qq install -y git subversion git-core wget curl grep > /dev/null 2>&1
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install git subversion git-core wget curl grep
         sudo timedatectl set-timezone "$TZ"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
