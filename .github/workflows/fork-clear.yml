@@ -105,8 +105,9 @@ jobs:
         rm -Rf *
         rm -Rf {.svn,.git}
         git rm --cache *
-        cp -Rf $GITHUB_WORKSPACE/gengxin/* ./
-        cp -Rf $GITHUB_WORKSPACE/gengxin/.github/workflows/* ./.github/workflows
+        cd $GITHUB_WORKSPACE
+        cp -Rf gengxin/* main3
+        cp -Rf gengxin/.github/workflows/* main/.github/workflows
         git add .
         git commit -m "Update ${{github.repository}} $(date +%Y年%m月%d号)" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
