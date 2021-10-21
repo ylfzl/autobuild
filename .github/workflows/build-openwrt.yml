@@ -18,7 +18,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'build/Lede_source/start-up/start'
 
