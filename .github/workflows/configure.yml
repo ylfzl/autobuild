@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       config:
-        description: '配置文件后随即自动启动对应源码编译'
+        description: '改成true,若配置文件有更新随即自动启动对应源码编译'
         required: false
         default: 'true-actions'
 
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-18.04
     if: github.event.repository.owner.id == github.event.sender.id
 
-    name: 生成"${{matrix.target}}"配置文件
+    name: 制作"${{matrix.target}}"配置文件
     strategy:
       fail-fast: false
       matrix:
