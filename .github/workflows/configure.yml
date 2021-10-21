@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       config:
-        description: '改成true,若配置文件有更新随即自动启动对应源码编译'
+        description: 'true-actions改成true,再启动,若配置文件有更新随即自动启动对应源码编译固件'
         required: false
         default: 'true-actions'
 
