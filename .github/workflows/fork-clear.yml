@@ -112,7 +112,6 @@ jobs:
         cd $GITHUB_WORKSPACE/mainn
         rm -Rf *
         rm -Rf {.svn,.git}
-        git rm --cache *
         cd $GITHUB_WORKSPACE
         cp -Rf gengxin/* mainn
         cp -Rf gengxin/.github/workflows/* mainn/.github/workflows
