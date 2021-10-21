@@ -107,11 +107,8 @@ jobs:
     - name: 重新FORK上游仓库
       if: env.REPO_TOKEN
       run: |
-        cd $GITHUB_WORKSPACE/gengxin
-        rm -rf build/*/.config
         cd $GITHUB_WORKSPACE/mainn
         rm -Rf *
-        rm -Rf {.svn,.git}
         cd $GITHUB_WORKSPACE
         cp -Rf gengxin/* mainn
         cp -Rf gengxin/.github/workflows/* mainn/.github/workflows
