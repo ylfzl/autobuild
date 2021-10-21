@@ -198,7 +198,6 @@ jobs:
     - name: configure.yml文件选择的机型同步到build-openwrt.yml（需要密匙）
       if: env.REPO_TOKEN
       run: |
-        sleep 5
         cd $GITHUB_WORKSPACE/main
         export YMLTARGE="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
         export YMLTARGE2="$(cat .github/workflows/configure.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed -e 's/^[ ]*//g' |sed  's/\[/\\&/' |sed  's/\]/\\&/')"
