@@ -173,7 +173,7 @@ jobs:
       if: env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
-        [[ -e "main" ]] && git clone -b main https://github.com/${{github.repository}}.git main
+        [[ ! -e "main" ]] && git clone -b main https://github.com/${{github.repository}}.git main
         cd main
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
