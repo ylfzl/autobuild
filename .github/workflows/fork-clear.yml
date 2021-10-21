@@ -45,6 +45,20 @@ jobs:
     name: 清理仓库或重新FORK上游仓库
     steps:
     
+    - name: 准备结束
+      uses: actions/checkout@v2
+    
+    
+    - name: 部署环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo -E apt-get -qq update > /dev/null 2>&1
+        sudo -E apt-get -qq install -y git subversion git-core wget curl grep > /dev/null 2>&1
+        sudo timedatectl set-timezone "$TZ"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+    
     - name: 设置项目开关参数控制
       run: |
         if [[ -n "${{ github.event.inputs }}" ]]; then
@@ -74,14 +88,26 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
           
+    
     - name: 重新FORK上游仓库
-      if: (github.event.inputs.again-fork == 'fork')
-      uses: danshui-git/github-forks-sync-action@main
-      with:
-        github_token: ${{ secrets.REPO_TOKEN }}
-        upstream_repository: 281677160/build-actions
-        upstream_branch: main
-        target_repository: ${{github.repository}}
-        target_branch: main
-        force: true
-        tags: false
+      if: env.REPO_TOKEN
+      run: |
+        cd $GITHUB_WORKSPACE
+        git clone -b main https://github.com/281677160/build-actions.git $GITHUB_WORKSPACE/gengxin
+        cd $GITHUB_WORKSPACE/gengxin
+        rm -rf build/*/.config
+        cd $GITHUB_WORKSPACE
+        git clone -b main https://github.com/${{github.repository}}.git $GITHUB_WORKSPACE/main
+        cd $GITHUB_WORKSPACE/main
+        cp -Rf $GITHUB_WORKSPACE/main/diy-part.sh $GITHUB_WORKSPACE/main/diy-part.sh.bak
+        cp -Rf $GITHUB_WORKSPACE/gengxin/* $GITHUB_WORKSPACE/main
+        git add .
+        git commit -m "Update ${{github.repository}} $(date +%Y年%m月%d号)" |tee build.log
+        if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
+          echo "配置文件无更新,所以无需要覆盖!"
+        else
+          rm -fr build.log
+          echo "正在更新${{github.repository}}!"
+          git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
+          echo "更新完毕!"
+        fi
