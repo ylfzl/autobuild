@@ -1,10 +1,4 @@
 #
-# 重新FORK仓库或者清理发布都需要用REPO_TOKEN密匙
-#
-# 同一个仓库只需要存入一次密匙即可，这密匙基本是万能的，什么都能用上
-#
-# REPO_TOKEN密匙制作教程：https://git.io/jm.md
-#
 #
 # 说明：
 # 
@@ -16,13 +10,14 @@
 #
 # ‘重新FORK上游仓库’ 只有在手动启动时候开启才生效，启动时参数改为fork的话，会把你现有的仓库改变成上游仓库的全部数据，要注意备份你的.config配置文件
 #
+#  REPO_TOKEN密匙制作教程：https://git.io/jm.md
+#
 #  为防止开启跟关闭时候跟清理空间和删除releases混淆，‘重新FORK上游仓库’的开关开启参数为 fork
 #
-# env:下面的OLDER_WORKFLOW和OLDER_RELEASES是定时启动时候设置开或者关闭项目运行（true为开，false关）
-#
+# env:下面的OLDER_WORKFLOW和OLDER_RELEASES是定时清理时候设置开或者关闭项目运行（true为开，false关）
 
 
-name: 重新FORK和清理
+name: 同步上游仓库和清理
 on:
   workflow_dispatch:
     inputs:
@@ -35,7 +30,7 @@ on:
         required: false
         default: 'true'
       again-fork:
-        description: '重新FORK上游仓库'
+        description: '同步上游仓库'
         required: false
         default: 'false'
 
@@ -45,12 +40,27 @@ on:
 env:
   OLDER_WORKFLOW: true
   OLDER_RELEASES: true
+  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+  TZ: Asia/Shanghai
 
 jobs:
   del_runs:
     runs-on: Ubuntu-20.04
-    name: 清理仓库或重新FORK上游仓库
+    name: 清理仓库或同步上游仓库
     steps:
+    
+    - name: 准备结束
+      uses: actions/checkout@v2
+      
+    - name: 部署环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo -E apt-get -qq update > /dev/null 2>&1
+        sudo -E apt-get -qq install -y git subversion git-core wget curl grep > /dev/null 2>&1
+        sudo timedatectl set-timezone "$TZ"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
     
     - name: 设置项目开关参数控制
       run: |
@@ -81,14 +91,28 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
           
-    - name: 重新FORK上游仓库
-      if: (github.event.inputs.again-fork == 'fork')
-      uses: danshui-git/github-forks-sync-action@main
-      with:
-        github_token: ${{ secrets.REPO_TOKEN }}
-        upstream_repository: 281677160/build-actions
-        upstream_branch: main
-        target_repository: ${{github.repository}}
-        target_branch: main
-        force: true
-        tags: false
+    
+    - name: 同步上游仓库（自动保存你的.config和备份diy-part.sh文件）
+      if: env.REPO_TOKEN && (github.event.inputs.again-fork == 'fork')
+      run: |
+        cd $GITHUB_WORKSPACE
+        git clone -b main https://github.com/281677160/build-actions.git $GITHUB_WORKSPACE/gengxin
+        cd $GITHUB_WORKSPACE/gengxin
+        rm -rf build/*/.config
+        cd $GITHUB_WORKSPACE
+        git clone -b main https://github.com/${{github.repository}}.git $GITHUB_WORKSPACE/main
+        cd $GITHUB_WORKSPACE/main
+        rm -fr .git
+        cp -Rf $GITHUB_WORKSPACE/main/diy-part.sh $GITHUB_WORKSPACE/main/diy-part.sh.bak
+        cp -Rf $GITHUB_WORKSPACE/gengxin/* ./
+        cp -Rf $GITHUB_WORKSPACE/gengxin/.github/workflows/* .github/workflows
+        git add .
+        git commit -m "Update ${{github.repository}} $(date +%Y年%m月%d号)" |tee build.log
+        if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
+          echo "配置文件无更新,所以无需要覆盖!"
+        else
+          rm -fr build.log
+          echo "正在更新${{github.repository}}!"
+          git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
+          echo "更新完毕!"
+        fi
