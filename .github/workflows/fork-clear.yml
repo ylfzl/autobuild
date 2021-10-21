@@ -38,6 +38,7 @@ on:
 env:
   OLDER_WORKFLOW: true
   OLDER_RELEASES: true
+  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
   TZ: Asia/Shanghai
 
 jobs:
