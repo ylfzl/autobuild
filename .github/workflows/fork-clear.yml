@@ -92,7 +92,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
           
     
-    - name: 同步上游仓库（自动保存你的.config和备份diy-part.sh文件）
+    - name: 同步上游仓库（自动保存你的.config和备份diy-part.sh文件,也不影响你的自建文件夹）
       if: env.REPO_TOKEN && (github.event.inputs.again-fork == 'fork')
       run: |
         cd $GITHUB_WORKSPACE
