@@ -1,18 +1,21 @@
 #
 #
-# 感谢p3terx大神的一键编译脚本
-# 
-# Copyright (C) 2019 P3TERX <https://p3terx.com>
-# <https://github.com/P3TERX/Actions-OpenWrt.git>
+# 编译固件所用，不带SSH连接配置固件了
 #
+# 需要配文件请用 configure.yml 先配置好文件再编译
+#
+# 把定时更新固件发布到云端或者发布固件都需要REPO_TOKEN密匙
+#
+# 同一个仓库只需要存入一次密匙即可，这密匙基本是万能的，什么都能用上
+#
+# REPO_TOKEN密匙制作教程：https://git.io/jm.md
+#
+#
+
+
 name: 编译OpenWrt固件
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - 'build/Lienol_source/start-up/start'
 
 # 定时触发开始编译(把下面两个#去掉开启,时间设置请看定时编译说明)
 #  schedule:
@@ -24,6 +27,7 @@ env:
   Apidz: ${{github.repository}}
   Run_number: ${{github.run_number}}
   Run_workflow: ${{github.workflow}}
+  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
   TZ: Asia/Shanghai
 
 jobs:
@@ -149,13 +153,6 @@ jobs:
       with:
         ccache: 'true'
         prefix: ${{ github.workspace }}/openwrt
-        
-    - name: SSH远程连接（配置固件）
-      if: env.SSH_ACTIONS == 'true' || (github.event.inputs.ssh == 'ssh' && github.event.inputs.ssh  != 'false')
-      uses: danshui-git/debugger-action@master
-      env:
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
     - name: 生成配置文件
       run: |
@@ -212,7 +209,7 @@ jobs:
         make -j$(nproc) || make -j1 V=s
         echo "::set-output name=status::success"
         echo "date=$(date "+%Y%m%d%H%M%S")" >> $GITHUB_ENV
-        echo "date1=$(date +'%m.%d')" >> $GITHUB_ENV
+        echo "date1=$(date +'%m-%d')" >> $GITHUB_ENV
 
     - name: 上传bin文件夹(固件+ipk)在 github actions
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
@@ -237,7 +234,6 @@ jobs:
         find -name "*Image*" | xargs -i rm -rf {}
         rm -rf packages
         rename -v "s/^openwrt/${{ env.date1 }}-${{ env.CODE }}/" *
-        rename -v "s/^immortalwrt/${{ env.date1 }}-${{ env.CODE }}/" *
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "BOT=TRUE" >> $GITHUB_ENV
         echo "::set-output name=status::success"
