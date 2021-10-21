@@ -38,6 +38,7 @@ on:
 env:
   OLDER_WORKFLOW: true
   OLDER_RELEASES: true
+  TZ: Asia/Shanghai
 
 jobs:
   del_runs:
