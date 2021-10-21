@@ -204,7 +204,7 @@ jobs:
         sed -i "s/${YMLTARGE}/${YMLTARGE2}/g" .github/workflows/build-openwrt.yml
         git add .
         git commit -m "Update build-openwrt.yml" |tee build.log
-        if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
+        if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]] || [[ `grep -c "Your branch is ahead of" build.log` -eq '1' ]]; then
           echo "配置文件无更新,所以无需要覆盖!"
         else
           rm -fr build.log
