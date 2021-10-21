@@ -147,7 +147,7 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
         
-    - name: 更新build-openwrt.yml文件，用于跟随修改.config随机启动编译
+    - name: 更新build-openwrt.yml文件，用于跟随修改.config随机启动编译（需要密匙）
       if: env.REPO_TOKEN && (github.event.inputs.config == 'true' && github.event.inputs.config  != 'false')
       run: |
         cd $GITHUB_WORKSPACE
@@ -169,7 +169,7 @@ jobs:
           echo "更新完毕!"
         fi
     
-    - name: 把新配置的.config配置文件自动覆盖到${{matrix.target}}文件夹的.config
+    - name: 把新配置的.config配置文件自动覆盖到${{matrix.target}}文件夹的.config（需要密匙）
       if: env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
@@ -195,7 +195,7 @@ jobs:
           echo "更新完毕!"
         fi
         
-    - name: build-openwrt.yml和configure.yml机型同步
+    - name: configure.yml文件选择的机型同步到build-openwrt.yml（需要密匙）
       if: env.REPO_TOKEN
       run: |
         sleep 3
@@ -210,5 +210,6 @@ jobs:
         else
           rm -fr build.log
           git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
+          echo "更新完毕!"
         fi
 
