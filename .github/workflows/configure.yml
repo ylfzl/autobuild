@@ -17,6 +17,11 @@
 name: 配置.config文件
 on:
   workflow_dispatch:
+    inputs:
+      config:
+        description: '配置文件后随即自动启动对应源码编译'
+        required: false
+        default: 'true-actions'
 
 env: 
  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
@@ -143,6 +148,7 @@ jobs:
         path: config.txt
         
     - name: 更新build-openwrt.yml文件，用于跟随修改.config随机启动编译
+      if: env.REPO_TOKEN && (github.event.inputs.config == 'true' && github.event.inputs.config  != 'false')
       run: |
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/${{github.repository}}.git main
@@ -164,6 +170,7 @@ jobs:
         fi
     
     - name: 把新配置的.config配置文件自动覆盖到${{matrix.target}}文件夹的.config
+      if: env.REPO_TOKEN && (github.event.inputs.config == 'true' && github.event.inputs.config  != 'false')
       run: |
         cd $GITHUB_WORKSPACE/main
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
@@ -185,6 +192,7 @@ jobs:
         fi
         
     - name: build-openwrt.yml和configure.yml机型同步，方便不更新配置时编译用
+      if: env.REPO_TOKEN && (github.event.inputs.config == 'true' && github.event.inputs.config  != 'false')
       run: |
         sleep 3
         cd $GITHUB_WORKSPACE/main
