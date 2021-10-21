@@ -195,7 +195,7 @@ jobs:
           echo "更新完毕!"
         fi
         
-    - name: 最后同步机型到build-openwrt.yml,主要是多机型编译同步用的（需要密匙）
+    - name: 最后更新build-openwrt.yml（需要密匙）
       if: env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE/main
