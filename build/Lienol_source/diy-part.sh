@@ -8,9 +8,7 @@
 # 如果你有编译ipv6的话，‘去掉LAN口使用内置的 IPv6 管理’代码前面也加 # 注释掉
 
 
-git clone https://github.com/wiwizcom/WiFiPortal.git
-cp -r WiFiPortal/eqos-master-wiwiz package/
-cp -r WiFiPortal/wifidog-wiwiz package/
+git clone -b main https://github.com/281677160/luci-app-autoupdate package/luci-app-autoupdate
 
 
 
