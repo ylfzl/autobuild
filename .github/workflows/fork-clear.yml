@@ -59,6 +59,8 @@ jobs:
         sudo -E apt-get -qq update > /dev/null 2>&1
         sudo -E apt-get -qq install -y git subversion git-core wget curl grep > /dev/null 2>&1
         sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
     
@@ -90,24 +92,31 @@ jobs:
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+        
+        
+    - name: 拉取源码
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone https://github.com/281677160/build-actions -b main gengxin
+        git clone https://github.com/${{github.repository}} -b main mainn
+        ln -sf /workdir/gengxin $GITHUB_WORKSPACE/gengxin
+        ln -sf /workdir/mainn $GITHUB_WORKSPACE/mainn
           
     
     - name: 重新FORK上游仓库
       if: env.REPO_TOKEN
       run: |
-        cd $GITHUB_WORKSPACE
-        git clone -b main https://github.com/281677160/build-actions.git $GITHUB_WORKSPACE/gengxin
         cd $GITHUB_WORKSPACE/gengxin
         rm -rf build/*/.config
-        cd $GITHUB_WORKSPACE
-        git clone -b main https://github.com/${{github.repository}}.git $GITHUB_WORKSPACE/main3
-        cd $GITHUB_WORKSPACE/main3
+        cd $GITHUB_WORKSPACE/mainn
         rm -Rf *
         rm -Rf {.svn,.git}
         git rm --cache *
         cd $GITHUB_WORKSPACE
-        cp -Rf gengxin/* main3
-        cp -Rf gengxin/.github/workflows/* main/.github/workflows
+        cp -Rf gengxin/* mainn
+        cp -Rf gengxin/.github/workflows/* mainn/.github/workflows
+        cd $GITHUB_WORKSPACE/mainn
         git add .
         git commit -m "Update ${{github.repository}} $(date +%Y年%m月%d号)" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
