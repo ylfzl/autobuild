@@ -161,8 +161,8 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
         
-    - name: 修改build-openwrt.yml文件，用于启动"${{matrix.target}}"编译
-      if: env.REPO_TOKEN && (github.event.inputs.config == 'true')
+    - name: 启动"${{matrix.target}}"编译
+      if: env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/${{github.repository}}.git repo
@@ -179,23 +179,6 @@ jobs:
         sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
         sed -i "s/${QIDONG_paths}/- 'build\/${Modelfile}\/start-up\/start'/g" .github/workflows/build-openwrt.yml
         sed -i "s/${QIDONG_main}/- main/g" .github/workflows/build-openwrt.yml
-        git add .
-        git commit -m "Update build-openwrt.yml" |tee build.log
-        if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
-          echo "配置文件无更新,所以无需要覆盖!"
-        else
-          rm -fr build.log
-          echo "正在更新build-openwrt.yml文件!"
-          git push --quiet "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
-          echo "build-openwrt.yml文件更新完毕!"
-        fi
-    
-    - name: 触发build-openwrt.yml文件自动编译
-      if: env.REPO_TOKEN
-      run: |
-        cd $GITHUB_WORKSPACE
-        [[ ! -e "repo" ]] && git clone -b main https://github.com/${{github.repository}}.git repo
-        cd repo
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
