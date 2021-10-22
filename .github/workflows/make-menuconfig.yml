@@ -169,29 +169,26 @@ jobs:
         git clone -b main https://github.com/${{github.repository}}.git repo
         export CRON2="$(cat repo/.github/workflows/make-menuconfig.yml |grep "cron:" |grep  -v \#  |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
         if [[ -n "${CRON2}" ]]; then
-          sed -i 's/^#\(.*schedule\)/\1/' symake-menuconfig.yml
-          sed -i 's/^#\(.*cron\)/\1/' symake-menuconfig.yml
-          export CRON1="$(cat symake-menuconfig.yml |grep "cron:" |grep  -v \#  |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
+          sed -i 's/^#\(.*schedule:\)/\1/' symake-menuconfig.yml
+          sed -i 's/^#\(.*- cron:\)/\1/' symake-menuconfig.yml
+          export CRON1="$(cat symake-menuconfig.yml |grep "cron:" |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
           sed -i "s/${CRON1}/${CRON2}/g" symake-menuconfig.yml
         fi
         export TARGET1="$(cat symake-menuconfig.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         export TARGET2="$(cat repo/.github/workflows/make-menuconfig.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         sed -i "s/${TARGET1}/${TARGET2}/g" symake-menuconfig.yml
-        cp -Rf $GITHUB_WORKSPACE/symake-menuconfig.yml repo/.github/workflows/make-menuconfig.yml
+        cp symake-menuconfig.yml repo/.github/workflows/make-menuconfig.yml
         cd repo
-        echo "222"
         curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > .github/workflows/build-openwrt.yml
         export QIDONG_paths="$(grep -A 1 'paths:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')"
-        export QIDONG_main="$(grep -A 1 'branches:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')"
         export TARGE="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         export TARGE2="target: \\[${{matrix.target}}\\]"
         sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
-        sed -i "s/${QIDONG_paths}/- 'build\/${Modelfile}\/start-up\/start'/g" .github/workflows/build-openwrt.yml
-        sed -i "s/${QIDONG_main}/- main/g" .github/workflows/build-openwrt.yml
+        sed -i "s/${QIDONG_paths}/- 'build\/${{matrix.target}}\/start-up\/start'/g" .github/workflows/build-openwrt.yml
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
-        mkdir -p build/${Modelfile}/start-up
+        mkdir -p build/${{matrix.target}}/start-up
         echo "${{env.CODE}}于$(date +%Y年%m月%d号-%H点%M分)自动触发编译${{env.TARGET_PROFILE}}固件" > build/${Modelfile}/start-up/start
         git add .
         git commit -m "编译${{env.CODE}}-${{env.TARGET_PROFILE}}固件"
