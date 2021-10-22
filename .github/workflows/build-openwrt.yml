@@ -136,11 +136,13 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
     - name: 生成"${{matrix.target}}"配置文件
+      id: compile
       run: |
         cd openwrt
         make defconfig
         ./scripts/diffconfig.sh > ${GITHUB_WORKSPACE}/${CONFIG_FILE}
         cp -r ${GITHUB_WORKSPACE}/${CONFIG_FILE} ${GITHUB_WORKSPACE}/config.txt
+        echo "::set-output name=status::success"
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
         echo "TARGET_SUBTARGET=$(awk -F '[="]+' '/TARGET_SUBTARGET/{print $2}' .config)" >> $GITHUB_ENV
         echo "Compile_Date=$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
@@ -163,29 +165,29 @@ jobs:
         path: config.txt
         
     - name: 启动"${{matrix.target}}"编译
-      if: env.REPO_TOKEN
+      if: steps.compile.outputs.status == 'success' && env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
-        curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/make-menuconfig.yml > symake-menuconfig.yml
+        curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > sybuild-openwrt.yml
         git clone -b main https://github.com/${{github.repository}}.git repo
-        export CRON2="$(cat repo/.github/workflows/make-menuconfig.yml |grep "cron:" |grep  -v \#  |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
+        export CRON2="$(cat repo/.github/workflows/build-openwrt.yml |grep "cron:" |grep  -v \#  |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
         if [[ -n "${CRON2}" ]]; then
-          sed -i 's/^#\(.*schedule:\)/\1/' symake-menuconfig.yml
-          sed -i 's/^#\(.*- cron:\)/\1/' symake-menuconfig.yml
-          export CRON1="$(cat symake-menuconfig.yml |grep "cron:" |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
-          sed -i "s/${CRON1}/${CRON2}/g" symake-menuconfig.yml
+          sed -i 's/^#\(.*schedule:\)/\1/' sybuild-openwrt.yml
+          sed -i 's/^#\(.*- cron:\)/\1/' sybuild-openwrt.yml
+          export CRON1="$(cat sybuild-openwrt.yml |grep "cron:" |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
+          sed -i "s/${CRON1}/${CRON2}/g" sybuild-openwrt.yml
         fi
-        export TARGET1="$(cat symake-menuconfig.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
-        export TARGET2="$(cat repo/.github/workflows/make-menuconfig.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
-        sed -i "s/${TARGET1}/${TARGET2}/g" symake-menuconfig.yml
-        cp symake-menuconfig.yml repo/.github/workflows/make-menuconfig.yml
+        export TARGET1="$(cat sybuild-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
+        export TARGET2="$(cat repo/.github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
+        sed -i "s/${TARGET1}/${TARGET2}/g" sybuild-openwrt.yml
+        cp symake-menuconfig.yml repo/.github/workflows/build-openwrt.yml
         cd repo
-        curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > .github/workflows/build-openwrt.yml
-        export QIDONG_paths="$(grep -A 1 'paths:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')"
-        export TARGE="$(cat .github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
+        curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/compile.yml > .github/workflows/compile.yml
+        export QIDONG_paths="$(grep -A 1 'paths:' .github/workflows/compile.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')"
+        export TARGE="$(cat .github/workflows/compile.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         export TARGE2="target: \\[${{matrix.target}}\\]"
-        sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/build-openwrt.yml
-        sed -i "s/${QIDONG_paths}/- 'build\/${{matrix.target}}\/start-up\/start'/g" .github/workflows/build-openwrt.yml
+        sed -i "s/${TARGE}/${TARGE2}/g" .github/workflows/compile.yml
+        sed -i "s/${QIDONG_paths}/- 'build\/${{matrix.target}}\/start-up\/start'/g" .github/workflows/compile.yml
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
         git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
