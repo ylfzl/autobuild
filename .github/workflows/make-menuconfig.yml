@@ -170,8 +170,8 @@ jobs:
         export CRON1="$(cat symake-menuconfig.yml |grep "cron:" |grep  -v \#  |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
         export CRON2="$(cat repo/.github/workflows/make-menuconfig.yml |grep "cron:" |grep  -v \#  |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
         if [[ -n "${CRON2}" ]]; then
-          sed -i 's/^#\(.*schedule:\)/\1/' symake-menuconfig.yml
-          sed -i 's/^#\(.*cron:\)/\1/' symake-menuconfig.yml
+          sed -i 's/^#\(.*schedule\)/\1/' symake-menuconfig.yml
+          sed -i 's/^#\(.*cron\)/\1/' symake-menuconfig.yml
           sed -i "s/${CRON1}/${CRON2}/g" symake-menuconfig.yml
         fi
         export TARGET1="$(cat symake-menuconfig.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
