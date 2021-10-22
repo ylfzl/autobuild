@@ -143,8 +143,7 @@ jobs:
         make defconfig
         ./scripts/diffconfig.sh > ${GITHUB_WORKSPACE}/${CONFIG_FILE}
         cp -r ${GITHUB_WORKSPACE}/${CONFIG_FILE} ${GITHUB_WORKSPACE}/config.txt
-        curl -fsSL https://raw.githubusercontent.com/{{github.repository}}/main/.github/workflows/build-openwrt.yml > build-openwrt
-        echo "CRON2="$(cat build-openwrt |grep "cron:" |grep  -v \# |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"" >> $GITHUB_ENV
+        echo "CRON2="$(cat $GITHUB_WORKSPACE/.github/workflows/build-openwrt.yml |grep "cron:" |grep  -v \# |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"" >> $GITHUB_ENV
         echo "::set-output name=status::success"
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
         echo "TARGET_SUBTARGET=$(awk -F '[="]+' '/TARGET_SUBTARGET/{print $2}' .config)" >> $GITHUB_ENV
@@ -172,7 +171,6 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > sybuild-openwrt.yml
-        git clone -b main https://github.com/${{github.repository}}.git repo
         if [[ -n "${CRON2}" ]]; then
           sed -i 's/^#\(.*schedule:\)/\1/' sybuild-openwrt.yml
           sed -i 's/^#\(.*cron:\)/\1/' sybuild-openwrt.yml
@@ -181,10 +179,11 @@ jobs:
           sed -i "s/${CRON1}/${CRON2}/g" sybuild-openwrt.yml
         fi
         export TARGET1="$(cat sybuild-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
-        export TARGET2="$(cat repo/.github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
+        export TARGET2="$(cat $GITHUB_WORKSPACE/.github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         sed -i "s/${TARGET1}/${TARGET2}/g" sybuild-openwrt.yml
-        cp cp sybuild-openwrt.yml repo/.github/workflows/build-openwrt.yml
+        git clone -b main https://github.com/${{github.repository}}.git repo
         cd repo
+        cp $GITHUB_WORKSPACE/sybuild-openwrt.yml .github/workflows/build-openwrt.yml
         curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/compile.yml > .github/workflows/compile.yml
         export QIDONG_paths="$(grep -A 1 'paths:' .github/workflows/compile.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')"
         export TARGE="$(cat .github/workflows/compile.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
