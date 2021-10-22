@@ -143,8 +143,8 @@ jobs:
         make defconfig
         ./scripts/diffconfig.sh > ${GITHUB_WORKSPACE}/${CONFIG_FILE}
         cp -r ${GITHUB_WORKSPACE}/${CONFIG_FILE} ${GITHUB_WORKSPACE}/config.txt
-        curl -fsSL https://raw.githubusercontent.com/{{github.repository}}/main/.github/workflows/build-openwrt.yml > build-openwrt.yml
-        export CRON2="$(cat build-openwrt.yml |grep "cron:" |grep  -v \# |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
+        curl -fsSL https://raw.githubusercontent.com/{{github.repository}}/main/.github/workflows/build-openwrt.yml > build-openwrt
+        echo "CRON2="$(cat build-openwrt |grep "cron:" |grep  -v \# |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"" >> $GITHUB_ENV
         echo "::set-output name=status::success"
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
         echo "TARGET_SUBTARGET=$(awk -F '[="]+' '/TARGET_SUBTARGET/{print $2}' .config)" >> $GITHUB_ENV
