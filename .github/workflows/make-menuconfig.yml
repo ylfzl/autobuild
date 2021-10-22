@@ -59,6 +59,10 @@ jobs:
         echo "SSH_ACTIONS=${SSH_ACTIONS}" >> $GITHUB_ENV
         echo "UPLOAD_CONFIG=${UPLOAD_CONFIG}" >> $GITHUB_ENV
         echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
+        
+    - name: 读取脚本设置
+      run: |
+        curl https://sctapi.ftqq.com/SCT1735TmFHHBlNZcoefa4hgrd3q8eza.send?title=编译完成&desp=编译完成1111111l了
 
     - name: 读取扩展文件
       run: |
