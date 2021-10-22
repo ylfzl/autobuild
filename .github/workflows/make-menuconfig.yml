@@ -62,7 +62,7 @@ jobs:
         
     - name: 读取脚本设置
       run: |
-        curl https://sctapi.ftqq.com/SCT1735TmFHHBlNZcoefa4hgrd3q8eza.send?title=编译完成&desp=编译完成1111111l了
+        curl https://sctapi.ftqq.com/SCT1735TmFHHBlNZcoefa4hgrd3q8eza.send?text=🎉OpenWrt编译完成😋
 
     - name: 读取扩展文件
       run: |
