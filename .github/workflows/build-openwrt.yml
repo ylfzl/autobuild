@@ -106,9 +106,7 @@ jobs:
     - name: 电报机器人信息通知
       if: env.SERVERCHAN_SCKEY != 'false'
       run: |
-        if: ${{ env.SERVERCHAN_SCKEY }} == "TG"
-          curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" --data "text=🎉 主人：您正在使用【${{matrix.target}}】文件夹编译固件中(${{env.CangKu}}仓库的#${{env.Run_number}}号),请耐心等待...... 😋" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
-        fi
+          [[ ${{ env.SERVERCHAN_SCKEY }} == "TG" ]] && curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" --data "text=🎉 主人：您正在使用【${{matrix.target}}】文件夹编译固件中(${{env.CangKu}}仓库的#${{env.Run_number}}号),请耐心等待...... 😋" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
         
 
     - name: 部署编译环境
