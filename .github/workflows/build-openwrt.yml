@@ -143,7 +143,7 @@ jobs:
         make defconfig
         ./scripts/diffconfig.sh > ${GITHUB_WORKSPACE}/${CONFIG_FILE}
         cp -r ${GITHUB_WORKSPACE}/${CONFIG_FILE} ${GITHUB_WORKSPACE}/config.txt
-        echo "CRON2="$(cat $GITHUB_WORKSPACE/.github/workflows/build-openwrt.yml |grep "cron:" |grep  -v \# |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"" >> $GITHUB_ENV
+        echo "DING_shi="$(cat $GITHUB_WORKSPACE/.github/workflows/build-openwrt.yml |grep "cron:" |grep  -v \# |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"" >> $GITHUB_ENV
         echo "::set-output name=status::success"
         echo "TARGET_BOARD=$(awk -F '[="]+' '/TARGET_BOARD/{print $2}' .config)" >> $GITHUB_ENV
         echo "TARGET_SUBTARGET=$(awk -F '[="]+' '/TARGET_SUBTARGET/{print $2}' .config)" >> $GITHUB_ENV
@@ -171,12 +171,12 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > sybuild-openwrt.yml
-        if [[ -n "${CRON2}" ]]; then
+        if [[ -n "${{env.DING_shi}}" ]]; then
           sed -i 's/^#\(.*schedule:\)/\1/' sybuild-openwrt.yml
           sed -i 's/^#\(.*cron:\)/\1/' sybuild-openwrt.yml
-          export CRON1="$(cat sybuild-openwrt.yml |grep "cron:" |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
-          echo "222222"
-          sed -i "s/${CRON1}/${CRON2}/g" sybuild-openwrt.yml
+          export DINGSHI_BY="$(cat sybuild-openwrt.yml |grep "cron:" |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
+          echo "${DINGSHI_BY},${{env.DING_shi}}"
+          sed -i "s/${DINGSHI_BY}/${{env.DING_shi}}/g" sybuild-openwrt.yml
         fi
         export TARGET1="$(cat sybuild-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         export TARGET2="$(cat $GITHUB_WORKSPACE/.github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
