@@ -18,14 +18,15 @@ name: 设置.config配置文件
 on:
   workflow_dispatch:
     inputs:
-      config:
+      ssh:
         description: 'true-actions改成true,再按Run workflow启动,自动启动对应源码编译固件'
         required: false
         default: 'true-actions'
 
+
 # 定时触发开始编译(把下面两个#去掉开启,时间设置请看定时编译说明)
-  schedule:
-   - cron: 0 16 */5 * *
+#  schedule:
+#   - cron: 0 16 */5 * *
 
 
 env: 
@@ -59,10 +60,6 @@ jobs:
         echo "SSH_ACTIONS=${SSH_ACTIONS}" >> $GITHUB_ENV
         echo "UPLOAD_CONFIG=${UPLOAD_CONFIG}" >> $GITHUB_ENV
         echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
-        
-    - name: 读取脚本设置
-      run: |
-        curl https://sctapi.ftqq.com/SCT1735TmFHHBlNZcoefa4hgrd3q8eza.send?text=🎉OpenWrt编译完成😋
 
     - name: 读取扩展文件
       run: |
@@ -88,7 +85,7 @@ jobs:
         echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
         echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
         
-    - name: 部署制作.config文件环境
+    - name: 部署编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
@@ -132,7 +129,7 @@ jobs:
         [[ -e "$PATH1/$CONFIG_FILE" ]] && mv "$PATH1/$CONFIG_FILE" .config
         
     - name: SSH远程连接（制作.config配置文件）
-      if: env.SSH_ACTIONS == 'true' && (github.event.inputs.config == 'true')
+      if: env.SSH_ACTIONS == 'true' || (github.event.inputs.ssh == 'true')
       uses: danshui-git/debugger-action@master
       env:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
