@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-18.04
     if: github.event.repository.owner.id == github.event.sender.id
 
-    name: 制作"${{matrix.target}}"配置文件
+    name: 编译OpenWrt固件
     strategy:
       fail-fast: false
       matrix:
@@ -59,6 +59,7 @@ jobs:
         echo "DIY_PART_SH=${DIY_PART_SH}" >> $GITHUB_ENV
         echo "SSH_ACTIONS=${SSH_ACTIONS}" >> $GITHUB_ENV
         echo "UPLOAD_CONFIG=${UPLOAD_CONFIG}" >> $GITHUB_ENV
+        echo "SERVERCHAN_SCKEY=${SERVERCHAN_SCKEY}" >> $GITHUB_ENV
         echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
 
     - name: 读取扩展文件
@@ -129,7 +130,7 @@ jobs:
         [[ -e "$PATH1/$CONFIG_FILE" ]] && mv "$PATH1/$CONFIG_FILE" .config
         
     - name: SSH远程连接（制作.config配置文件）
-      if: env.SSH_ACTIONS == 'true' || (github.event.inputs.ssh == 'ssh')
+      if: env.SSH_ACTIONS == 'true' || (github.event.inputs.ssh == '')
       uses: danshui-git/debugger-action@master
       env:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
