@@ -179,6 +179,7 @@ jobs:
           sed -i 's/^#\(.*schedule:\)/\1/' sybuild-openwrt.yml
           sed -i 's/^#\(.*cron:\)/\1/' sybuild-openwrt.yml
           sed -i "s/${CRON1}/${CRON2}/g" sybuild-openwrt.yml
+          echo "HAHAHAHHAHHA"
         fi
         export TARGET1="$(cat sybuild-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         export TARGET2="$(cat repo/.github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
