@@ -104,7 +104,7 @@ jobs:
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/281677160/build-actions.git shangyou
         cd shangyou
-        rm -rf build/*/.config
+        git rm build/*/.config
         export QIDONG_paths="$(grep -A 1 'paths:' .github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')"
         sed -i "s/${QIDONG_paths}/- 'config'/g" .github/workflows/build-openwrt.yml
         cd $GITHUB_WORKSPACE
@@ -113,12 +113,14 @@ jobs:
         cp -Rf build/Lede_source/diy-part.sh build/Lede_source/diy-part.sh.bak
         cp -Rf build/Lienol_source/diy-part.sh build/Lienol_source/diy-part.sh.bak
         cp -Rf build/Mortal_source/diy-part.sh build/Mortal_source/diy-part.sh.bak
+        cp -Rf build/Tianling_source/diy-part.sh build/Tianling_source/diy-part.sh.bak
         cp -Rf build/openwrt_amlogic/diy-part.sh build/openwrt_amlogic/diy-part.sh.bak
+        git rm build/*/diy-part.sh
         cp -Rf $GITHUB_WORKSPACE/shangyou/* ./
         cp -Rf $GITHUB_WORKSPACE/shangyou/.github/workflows/* ./.github/workflows
         git add .
         git commit -m "同步上游281677160/build-actions于$(date +%Y年%m月%d号%H点)" |tee build.log
-        if [[ `grep -c "Your branch is up to date with" build.log` -eq '1' ]]; then
+        if [[ `grep -c "Your branch is up to date with" build.log` == '1' ]]; then
           echo "配置文件无更新,所以无需要覆盖!"
         else
           rm -fr build.log
