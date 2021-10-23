@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-18.04
     if: github.event.repository.owner.id == github.event.sender.id
 
-    name: 触发compile启动编译
+    name: 启动${{matrix.target}}编译
     strategy:
       fail-fast: false
       matrix:
