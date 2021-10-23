@@ -181,7 +181,11 @@ jobs:
         sed -i "s/${TARGET1}/${TARGET2}/g" sybuild-openwrt.yml
         cd repo
         rm -Rf build/${{matrix.target}}/${CONFIG_FILE}
-        git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
+        git rm build/${{matrix.target}}/${CONFIG_FILE}
+        rm -Rf .github/workflows/build-openwrt.yml
+        git rm .github/workflows/build-openwrt.yml
+        rm -Rf .github/workflows/compile.yml
+        git rm .github/workflows/compile.yml
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         cp $GITHUB_WORKSPACE/sybuild-openwrt.yml .github/workflows/build-openwrt.yml
         curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/compile.yml > .github/workflows/compile.yml
