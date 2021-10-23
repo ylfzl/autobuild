@@ -14,7 +14,7 @@
 #
 #
 
-name: 编译OpenWrt固件
+name: 触发compile启动编译
 on:
   workflow_dispatch:
     inputs:
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-18.04
     if: github.event.repository.owner.id == github.event.sender.id
 
-    name: 编译OpenWrt固件
+    name: 触发compile启动编译
     strategy:
       fail-fast: false
       matrix:
@@ -165,7 +165,7 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
         
-    - name: 启动"${{matrix.target}}"编译
+    - name: 触发compile.yml启动"${{matrix.target}}"编译
       if: env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
@@ -174,8 +174,8 @@ jobs:
         git clone -b main https://github.com/${{github.repository}}.git repo
         Sched="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |grep "^#")"
         if [[ -z "${Sched}" ]]; then
-          export CRON2="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
-          export CRON1="$(grep -A 1 'schedule:' sybuild-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
+          export CRON2="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
+          export CRON1="$(grep -A 1 'schedule:' sybuild-openwrt.yml |awk 'NR==2' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
           sed -i 's/^#\(.*schedule:\)/\1/' sybuild-openwrt.yml
           sed -i 's/^#\(.*cron:\)/\1/' sybuild-openwrt.yml
           sed -i "s/${CRON1}/${CRON2}/g" sybuild-openwrt.yml
