@@ -162,7 +162,7 @@ jobs:
         path: config.txt
         
     - name: 触发compile.yml启动"${{matrix.target}}"编译
-      if: env.REPO_TOKEN
+      if: steps.compile.outputs.status == 'success' && env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
         rm -fr .github
