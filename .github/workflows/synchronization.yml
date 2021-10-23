@@ -109,7 +109,7 @@ jobs:
         sed -i "s/${QIDONG_paths}/- 'config'/g" .github/workflows/build-openwrt.yml
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/${{github.repository}}.git repogx
-        export Sched="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2')" && echo "${Sched}" > Schedu
+        export Sched="$(grep -A 1 'schedule:' repogx/.github/workflows/build-openwrt.yml |awk 'NR==2')" && echo "${Sched}" > Schedu
         if [[ `grep -c "\#" Schedu` == '0' ]]; then
           export CRON2="$(grep -A 1 'schedule:' repogx/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
           export CRON1="$(grep -A 1 'schedule:' $GITHUB_WORKSPACE/shangyou/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
@@ -135,7 +135,7 @@ jobs:
         cp -Rf build/openwrt_amlogic/diy-part.sh build/openwrt_amlogic/diy-part.sh.bak
         git rm build/*/diy-part.sh
         cp -Rf $GITHUB_WORKSPACE/shangyou/* ./
-        cp -Rf $GITHUB_WORKSPACE/shangyou/.github/workflows/* .github/workflows
+        cp -Rf $GITHUB_WORKSPACE/shangyou/.github/workflows/* ./.github/workflows
         git add .
         git commit -m "同步上游281677160/build-actions于$(date +%Y年%m月%d号%H点)" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` == '1' ]]; then
