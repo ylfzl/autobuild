@@ -163,28 +163,26 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
         
-    - name: 启动"${{matrix.target}}"编译
-      run: |
-        curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > sybuild-openwrt.yml
-        echo "DING_shi=$(cat $GITHUB_WORKSPACE/.github/workflows/build-openwrt.yml |grep "cron:" |grep  -v \# |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
-        echo "DINGSHI_BY=$(cat sybuild-openwrt.yml |grep "cron:" |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
-        echo "TARGET1=$(cat sybuild-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
-        echo "TARGET2=$(cat $GITHUB_WORKSPACE/.github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
-        
         
     - name: 启动"${{matrix.target}}"编译
       if: env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
-        if [[ -n "${{env.DING_shi}}" ]]; then
+        rm -fr .github
+        curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > sybuild-openwrt.yml
+        git clone -b main https://github.com/${{github.repository}}.git repo
+        export CRON2="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
+        if [[ -n "${CRON2}" ]]; then
+          export CRON1="$(grep -A 1 'schedule:' sybuild-openwrt.yml |awk 'NR==2' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
           sed -i 's/^#\(.*schedule:\)/\1/' sybuild-openwrt.yml
           sed -i 's/^#\(.*cron:\)/\1/' sybuild-openwrt.yml
-          sed -i "s/${{env.DINGSHI_BY}}/${{env.DING_shi}}/g" sybuild-openwrt.yml
+          sed -i "s/${CRON1}/${CRON2}/g" sybuild-openwrt.yml
         fi
-        sed -i "s/${{TARGET1}}/${{TARGET2}}/g" sybuild-openwrt.yml
-        git clone -b main https://github.com/${{github.repository}}.git repo
+        export TARGET1="$(cat sybuild-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
+        export TARGET2="$(cat repo/.github/workflows/sybuild-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
+        sed -i "s/${TARGET1}/${TARGET2}/g" sybuild-openwrt.yml
+        cp sybuild-openwrt.yml repo/.github/workflows/build-openwrt.yml
         cd repo
-        cp $GITHUB_WORKSPACE/sybuild-openwrt.yml .github/workflows/build-openwrt.yml
         curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/compile.yml > .github/workflows/compile.yml
         export QIDONG_paths="$(grep -A 1 'paths:' .github/workflows/compile.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')"
         export TARGE="$(cat .github/workflows/compile.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
