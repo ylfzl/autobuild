@@ -116,7 +116,7 @@ jobs:
         if [[ `ls -a $GITHUB_WORKSPACE/repogx/.github/workflows | grep -c "compile.yml"` == '0' ]]; then
           curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/compile.yml > $GITHUB_WORKSPACE/repogx/.github/workflows/compile.yml
         fi
-        if [[ `ls -a $GITHUB_WORKSPACE/repogx/.github/workflows | grep -c "build-openwrt.yml"` == '0' ]]; then
+        if [[ `ls -a $GITHUB_WORKSPACE/repogx/.github/workflows | grep -c "synchronization.yml"` == '0' ]]; then
           curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/synchronization.yml > $GITHUB_WORKSPACE/repogx/.github/workflows/synchronization.yml
         fi
         
