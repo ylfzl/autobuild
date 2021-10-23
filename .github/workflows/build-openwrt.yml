@@ -25,8 +25,8 @@ on:
 
 
 # 定时触发开始编译(把下面两个#去掉开启,时间设置请看定时编译说明)
- # schedule:
- #  - cron: 0 16 */5 * *
+#  schedule:
+#   - cron: 0 16 */5 * *
 
 
 env: 
@@ -158,23 +158,19 @@ jobs:
           echo "TARGET_PROFILE=armvirt" >> $GITHUB_ENV
         fi
         
+    - name: 上传.config配置文件在 github actions
+      if: env.UPLOAD_CONFIG == 'true'
+      uses: actions/upload-artifact@v2
+      with:
+        name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
+        path: config.txt
+        
     - name: 启动"${{matrix.target}}"编译
-      if: env.REPO_TOKEN
+      if: steps.compile.outputs.status == 'success' && env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
-        rm -fr .github
         curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > sybuild-openwrt.yml
         git clone -b main https://github.com/${{github.repository}}.git repo
-        Sched="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |grep "^#")"
-        if [[ -z "${Sched}" ]]; then
-          export CRON2="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
-          export CRON1="$(grep -A 1 'schedule:' sybuild-openwrt.yml |awk 'NR==2' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
-          sed -i 's/^#\(.*schedule:\)/\1/' sybuild-openwrt.yml
-          sed -i 's/^#\(.*cron:\)/\1/' sybuild-openwrt.yml
-          echo "TARGET_PROFILE"
-          sed -i "s/${CRON1}/${CRON2}/g" sybuild-openwrt.yml
-          echo "TARGET_PROFILE=armvirt"
-        fi
         export TARGET1="$(cat sybuild-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         export TARGET2="$(cat repo/.github/workflows/build-openwrt.yml |grep "target: \[" |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         sed -i "s/${TARGET1}/${TARGET2}/g" sybuild-openwrt.yml
