@@ -121,7 +121,7 @@ jobs:
           export CRON1="$(grep -A 1 'schedule:' $GITHUB_WORKSPACE/shangyou/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
           sed -i "s/${CRON1}/${CRON2}/g" $GITHUB_WORKSPACE/shangyou/.github/workflows/build-openwrt.yml
         fi
-        export TARGET1="$(grep "target: \[" sybuild-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
+        export TARGET1="$(grep "target: \[" $GITHUB_WORKSPACE/shangyou/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         export TARGET2="$(grep "target: \[" repogx/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')"
         sed -i "s/${TARGET1}/${TARGET2}/g" $GITHUB_WORKSPACE/shangyou/.github/workflows/build-openwrt.yml
         cd repogx
@@ -135,7 +135,7 @@ jobs:
         cp -Rf build/openwrt_amlogic/diy-part.sh build/openwrt_amlogic/diy-part.sh.bak
         git rm build/*/diy-part.sh
         cp -Rf $GITHUB_WORKSPACE/shangyou/* ./
-        cp -Rf $GITHUB_WORKSPACE/shangyou/.github/workflows/* ./.github/workflows
+        cp -Rf $GITHUB_WORKSPACE/shangyou/.github/workflows/* .github/workflows
         git add .
         git commit -m "同步上游281677160/build-actions于$(date +%Y年%m月%d号%H点)" |tee build.log
         if [[ `grep -c "Your branch is up to date with" build.log` == '1' ]]; then
