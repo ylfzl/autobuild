@@ -29,7 +29,7 @@ sed -i "s/OpenWrt /${Author} Compiled in $(TZ=UTC-8 date "+%Y.%m.%d") @ OpenWrt 
 
 sed -i '/CYXluq4wUazHjmCDBCqXF/d' $ZZZ                                                             # 设置密码为空
 
-sed -i 's/PATCHVER:=4.14/PATCHVER:=4.19/g' target/linux/bcm53xx/Makefile                               # x86机型,默认内核4.19，修改内核为4.14或者4.9
+# sed -i 's/PATCHVER:=4.14/PATCHVER:=4.19/g' target/linux/bcm53xx/Makefile                               # x86机型,默认内核4.19，修改内核为4.14或者4.9
 
 
 # K3专用，编译K3的时候只会出K3固件
