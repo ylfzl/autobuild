@@ -165,12 +165,13 @@ jobs:
         rm -fr .github
         curl -fsSL https://raw.githubusercontent.com/281677160/build-actions/main/.github/workflows/build-openwrt.yml > sybuild-openwrt.yml
         git clone -b main https://github.com/${{github.repository}}.git repo
-        Sched="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |grep "^#")"
+        Sched="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |grep "^#")"
         if [[ -z "${Sched}" ]]; then
           export CRON2="$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
           export CRON1="$(grep -A 1 'schedule:' sybuild-openwrt.yml |awk 'NR==2' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')"
           sed -i 's/^#\(.*schedule:\)/\1/' sybuild-openwrt.yml
           sed -i 's/^#\(.*cron:\)/\1/' sybuild-openwrt.yml
+          echo "TARGET_PROFILE"
           sed -i "s/${CRON1}/${CRON2}/g" sybuild-openwrt.yml
           echo "TARGET_PROFILE=armvirt"
         fi
