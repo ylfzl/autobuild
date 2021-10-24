@@ -168,10 +168,10 @@ jobs:
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/281677160/build-actions.git shangyouck
         git clone -b main https://github.com/${{github.repository}}.git repo
-        if [ ! ${{env.BILDYML}} == build-openwrt.yml ]; then
+        if [[ ! ${{env.BILDYML}} == build-openwrt.yml ]]; then
           mv -f $GITHUB_WORKSPACE/.github/workflows/${{env.BILDYML}} repo/.github/workflows/build-openwrt.yml
         fi
-        if [ -z "$(ls -A "repo/.github/workflows/synchronization.yml" 2>/dev/null)" ]; then
+        if [[ -z "$(ls -A "repo/.github/workflows/synchronization.yml" 2>/dev/null)" ]]; then
           cp -Rf shangyouck/.github/workflows/synchronization.yml repo/.github/workflows/synchronization.yml
         fi
         echo "CRON2=$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed s/^#// |sed 's/^[ ]*//g' |cut -d "#" -f1 |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
@@ -199,9 +199,9 @@ jobs:
         sed -i "s/${{env.QIDONG1}}/${{env.QIDONG2}}/g" shangyouck/.github/workflows/compile.yml
         cd repo
         [[ -e "build/${{matrix.target}}/${CONFIG_FILE}" ]] && git rm -f build/${{matrix.target}}/${CONFIG_FILE}
-        [[ -e ".github/workflows/build-openwrt.yml" ]] && git rm -f .github/workflows/${{env.BILDYML}}
-        [[ -e ".github/workflows/build-openwrt.yml" ]] && git rm -f .github/workflows/build-openwrt.yml
-        [[ -e ".github/workflows/compile.yml" ]] && git rm -f .github/workflows/compile.yml
+        [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/${{env.BILDYML}}" 2>/dev/null)" ]] && git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/${{env.BILDYML}}
+        [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/build-openwrt.yml" 2>/dev/null)" ]] && git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/build-openwrt.yml
+        [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/compile.yml" 2>/dev/null)" ]] && git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/compile.yml
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/shangyouck/.github/workflows/build-openwrt.yml .github/workflows/build-openwrt.yml
         cp -Rf $GITHUB_WORKSPACE/shangyouck/.github/workflows/compile.yml .github/workflows/compile.yml
