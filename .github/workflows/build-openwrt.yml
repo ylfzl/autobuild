@@ -21,8 +21,8 @@ on:
 
 
 # 定时触发开始编译(把下面两个#去掉开启,时间设置请看定时编译说明)
-#  schedule:
-#   - cron: 0 16 */7 * *
+##  schedule:
+##   - cron: 0 16 * * *   # 每天8点定时更新固件
 
 
 env: 
@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Lienol_source,Mortal_source]
+        target: [Lede_source]
 
         # [Lede_source,Lienol_source,Mortal_source,Tianling_source,openwrt_amlogic]
 
@@ -62,6 +62,9 @@ jobs:
       run: |
         echo
         git clone --depth 1 -b main https://github.com/281677160/common build/common > /dev/null 2>&1
+        echo "BILDYML=$(grep "compileop" -rl ${GITHUB_WORKSPACE}/.github |cut -d "/" -f9)" >> $GITHUB_ENV
+        echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
+        echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
         chmod -R +x "${GITHUB_WORKSPACE}/build/common"
         if [[ "${Modelfile}" == "openwrt_amlogic" ]]; then
           echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
@@ -79,8 +82,6 @@ jobs:
           echo "ZZZ=package/emortal/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
           echo "CODE=Mortal" >> $GITHUB_ENV
         fi
-        echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
-        echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
         
     - name: 部署编译环境
       env:
@@ -167,8 +168,8 @@ jobs:
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/281677160/build-actions.git shangyouck
         git clone -b main https://github.com/${{github.repository}}.git repo
-        if [ -z "$(ls -A "repo/.github/workflows/build-openwrt.yml" 2>/dev/null)" ]; then
-          cp -Rf shangyouck/.github/workflows/build-openwrt.yml repo/.github/workflows/build-openwrt.yml
+        if [ ! ${{env.BILDYML}} == build-openwrt.yml ]; then
+          mv -f $GITHUB_WORKSPACE/.github/workflows/${{env.BILDYML}} repo/.github/workflows/build-openwrt.yml
         fi
         if [ -z "$(ls -A "repo/.github/workflows/synchronization.yml" 2>/dev/null)" ]; then
           cp -Rf shangyouck/.github/workflows/synchronization.yml repo/.github/workflows/synchronization.yml
@@ -198,6 +199,7 @@ jobs:
         sed -i "s/${{env.QIDONG1}}/${{env.QIDONG2}}/g" shangyouck/.github/workflows/compile.yml
         cd repo
         [[ -e "build/${{matrix.target}}/${CONFIG_FILE}" ]] && git rm -f build/${{matrix.target}}/${CONFIG_FILE}
+        [[ -e ".github/workflows/build-openwrt.yml" ]] && git rm -f .github/workflows/${{env.BILDYML}}
         [[ -e ".github/workflows/build-openwrt.yml" ]] && git rm -f .github/workflows/build-openwrt.yml
         [[ -e ".github/workflows/compile.yml" ]] && git rm -f .github/workflows/compile.yml
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
