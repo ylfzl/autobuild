@@ -161,15 +161,6 @@ jobs:
         git clone -b main https://github.com/281677160/build-actions.git shangyouck
         git clone -b main https://github.com/${{github.repository}}.git repo
         
-        if [[ `ls -a repo/.github/workflows | grep -c "build-openwrt.yml"` == '0' ]]; then
-          cp -Rf shangyouck/.github/workflows/build-openwrt.yml repo/.github/workflows/build-openwrt.yml
-        fi
-        if [[ `ls -a repo/.github/workflows | grep -c "compile.yml"` == '0' ]]; then
-          cp -Rf shangyouck/.github/workflows/compile.yml repo/.github/workflows/compile.yml
-        fi
-        if [[ `ls -a repo/.github/workflows | grep -c "synchronization.yml"` == '0' ]]; then
-          cp -Rf shangyouck/.github/workflows/synchronization.yml repo/.github/workflows/synchronization.yml
-        fi
           echo "CRON2=$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
           echo "CRON1="$(grep -A 1 'schedule:' shangyouck/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
           sed -i 's/^#\(.*schedule:\)/\1/' shangyouck/.github/workflows/build-openwrt.yml
