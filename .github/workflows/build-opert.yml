@@ -57,6 +57,7 @@ jobs:
         echo "UPLOAD_CONFIG=${UPLOAD_CONFIG}" >> $GITHUB_ENV
         echo "SERVERCHAN_SCKEY=${SERVERCHAN_SCKEY}" >> $GITHUB_ENV
         echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
+        echo "Dispatch=${{workflow_dispatch}}" >> $GITHUB_ENV
 
     - name: 读取扩展文件
       run: |
