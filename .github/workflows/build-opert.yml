@@ -21,8 +21,8 @@ on:
 
 
 # 定时触发开始编译(把下面两个#去掉开启,时间设置请看定时编译说明)
-#  schedule:
-#   - cron: 0 16 */7 * *
+##  schedule:
+##   - cron: 0 16 * * *   # 每天8点定时更新固件
 
 
 env: 
@@ -81,7 +81,6 @@ jobs:
         fi
         echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
         echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
-        echo "DELET111E=$(grep "compileop" -rl ${GITHUB_WORKSPACE}/.github/workflows| cut -d "/" -f9)" >> $GITHUB_ENV
         
     - name: 部署编译环境
       env:
@@ -134,7 +133,7 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
     - name: 生成"${{matrix.target}}"配置文件
-      id: compileop
+      id: compile
       run: |
         cd openwrt
         make defconfig
@@ -163,7 +162,7 @@ jobs:
         path: config.txt
         
     - name: 同步上游compile.yml和build-openwrt.yml文件
-      if: steps.compileop.outputs.status == 'success' && env.REPO_TOKEN
+      if: steps.compile.outputs.status == 'success' && env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/281677160/build-actions.git shangyouck
@@ -190,7 +189,7 @@ jobs:
         
         
     - name: 触发compile.yml启动"${{matrix.target}}"编译
-      if: steps.compileop.outputs.status == 'success' && env.REPO_TOKEN
+      if: steps.compile.outputs.status == 'success' && env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
         sed -i "s/${{env.CRON1}}/${{env.CRON2}}/g" shangyouck/.github/workflows/build-openwrt.yml
