@@ -134,7 +134,7 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
     - name: 生成"${{matrix.target}}"配置文件
-      id: compileop111
+      id: compileop
       run: |
         cd openwrt
         make defconfig
