@@ -161,7 +161,7 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
         
-    - name: 同步上游compile.yml文件
+    - name: 同步上游compile.yml和build-openwrt.yml文件
       if: steps.compile.outputs.status == 'success' && env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
@@ -179,14 +179,13 @@ jobs:
           sed -i 's/^#\(.*schedule:\)/\1/' shangyouck/.github/workflows/build-openwrt.yml
           sed -i 's/^#\(.*- cron:\)/\1/' shangyouck/.github/workflows/build-openwrt.yml
         fi
-        echo "TARGET1=$(grep "target: \[" shangyouck/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
-        echo "TARGET2=$(grep "target: \[" repo/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
+        echo "TARGET1=$(grep 'target: \[' shangyouck/.github/workflows/build-openwrt.yml  |sed 's/^[ ]*//g' |grep '^target' |cut -d '#' -f1 |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
+        echo "TARGET2=$(grep 'target: \[' repo/.github/workflows/build-openwrt.yml  |sed 's/^[ ]*//g' |grep '^target' |cut -d '#' -f1 |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "QIDONG1=$(grep -A 1 'paths:' shangyouck/.github/workflows/compile.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')" >> $GITHUB_ENV
         echo "QIDONG2=- 'build\/${{matrix.target}}\/start-up\/start'" >> $GITHUB_ENV
-        echo "TARGE1=$(grep "target: \[" shangyouck/.github/workflows/compile.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
+        echo "TARGE1=$(grep 'target: \[' shangyouck/.github/workflows/compile.yml |sed 's/^[ ]*//g' |grep '^target' |cut -d '#' -f1 |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "TARGE2=target: \\[${{matrix.target}}\\]" >> $GITHUB_ENV
         [[ -z ${CRON2} ]] && echo "CRON2=- cron: 0 16 \*\/7 \* \*" >> $GITHUB_ENV
-        [[ -z ${TARGET2} ]] && echo "TARGET2=target: \\[${{matrix.target}}\\]" >> $GITHUB_ENV
         
         
     - name: 触发compile.yml启动"${{matrix.target}}"编译
