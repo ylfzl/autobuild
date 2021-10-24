@@ -2,19 +2,17 @@
 
 - # 择要
 ---
-- 2021/10/22号更新了最新获取.config方法，和修改了最新的一键同步上游仓库，更人性化
-- 《[全新在线获取.config配置文件教程](https://github.com/danshui-git/shuoming/blob/master/config.md)》
+- 2021/10/23号更新
+- 《[全新启动编译教程（必须获取密匙后才可以）](https://github.com/danshui-git/shuoming/blob/master/config.md)》
 - 《[全新一键保存配置同步上游仓库和清理仓库说明](https://github.com/danshui-git/shuoming/blob/master/chongxinfork.md)》
 - 新手教程全新整理了一下，应该更容易看懂了
-- 最新仓库修改了获取.config配置文件和保存配置同步上游仓库的方式，所以在.github/workflows文件里面的（build-openwrt.yml和make-menuconfig.yml）文件名是不能修改的，切记！
-- 保持 build-openwrt.yml 和 make-menuconfig.yml 就好，反正这个文件名字也应该没多少人闲地蛋痛去修改吧，就是说一下比较好
 ---
 - # 介绍
 ---
 - [Lede_source](https://github.com/coolsnowwolf/lede)，Luci版本=18.06、内核版本=5.4和5.10
 - [Lienol_source](https://github.com/Lienol/openwrt/tree/19.07)，Luci版本=17.01、内核版本=4.14
 - [Mortal_source](https://github.com/immortalwrt/immortalwrt/tree/openwrt-21.02)，Luci版本=21.02、内核版本=5.4
-- [Tianling_source](https://github.com/immortalwrt/immortalwrt/tree/openwrt-18.06)，Luci版本=18.06、内核版本=4.19和4.14还有4.9
+- [Tianling_source](https://github.com/immortalwrt/immortalwrt/tree/openwrt-18.06)，Luci版本=18.06、内核版本=4.19和4.14
 - [openwrt_amlogic](https://github.com/coolsnowwolf/lede)，N1和晶晨系列CPU盒子专用（Luci版本=18.06、内核版本=5.4和5.10）
 
 - openwrt_amlogic文件夹，编译S905x3, S905x2, S922x, S905x, S905d, s912《[自动打包您所需的固件说明](https://github.com/danshui-git/shuoming/blob/master/Amlogic.md)》
@@ -42,28 +40,26 @@ op自带的ttyd或者用putty连接OP都可以，用了命令后会一直使用�
 #
 - > 2、拉取我的仓库到你的github帐号《[拉取仓库教程](https://github.com/danshui-git/shuoming/blob/master/1%E6%8B%89%E5%8F%96%E4%BB%93%E5%BA%93.md)》
 #
-- > 3、获取密匙然后在编译仓库使用密匙，非必要步骤，但是有密匙就方便很多，推荐获取《[仓库密匙获取跟使用](https://github.com/danshui-git/shuoming/blob/master/jm.md)》
+- > 3、必须了解的脚本简单介绍，起码也知道我仓库有什么源码，出处那里，然后您才好选择《[脚本简单介绍](https://github.com/danshui-git/shuoming/blob/master/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D%E6%96%B0%E8%84%9A%E6%9C%AC.md)》
 #
-- > 4、必须了解的脚本简单介绍，起码也知道我仓库有什么源码，出处那里，然后您才好选择《[脚本简单介绍](https://github.com/danshui-git/shuoming/blob/master/%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D%E6%96%B0%E8%84%9A%E6%9C%AC.md)》
+- > 4、必须获取密匙然后在你拉取我的仓库里使用，要不然我的仓库您使用不了《[仓库密匙获取跟使用](https://github.com/danshui-git/shuoming/blob/master/jm.md)》
 #
 - > 5、选择要编译的源码文件《[选择编译源码教程](https://github.com/danshui-git/shuoming/blob/master/%E9%80%89%E6%8B%A9%E6%9C%BA%E5%9E%8B.md)》
 #
-- > 6、修改后台登录IP，在build文件夹-->对应您在第5步修改的源码文件夹里点开[diy-part.sh]，然后修改后台登录IP《[修改ip教程](https://github.com/danshui-git/shuoming/blob/master/ip.md)》
+- > 6、修改后台登录IP，在build文件夹-->对应您在第 5 步修改的源码文件夹里点开[diy-part.sh]，然后修改后台登录IP《[修改ip教程](https://github.com/danshui-git/shuoming/blob/master/ip.md)》
 #
-- > 7、开启或者关闭某功能，在build文件夹-->对应您在第5步修改的源码文件夹里点开[settings.ini]，然后按需控制各项目开关《[各开关控制教程](https://github.com/danshui-git/shuoming/blob/master/kaiguan.md)》
+- > 7、开启或者关闭某功能，在build文件夹-->对应您在第 5 步修改的源码文件夹里点开[settings.ini]，然后按需控制各项目开关《[各开关控制教程](https://github.com/danshui-git/shuoming/blob/master/kaiguan.md)》
 #
-- > 8、获取.config配置文件，分《[在线获取.config配置文件教程](https://github.com/danshui-git/shuoming/blob/master/config.md)》和《[本地获取.config](https://github.com/danshui-git/shuoming/blob/master/yijianconfig.md)》两种方法，您喜欢什么样的都行，不管什么获取方式，您一定要确保你获取到的配置文件内容已经覆盖到对应源码文件夹的.config里面。（提示：因github风控原因，编译跟获取.config文件要分开搞）
+- > 8、启动编译《[启动编译程序和SSH连接修改插件机型等教程](https://github.com/danshui-git/shuoming/blob/master/config.md)》
 #
-- > 9、第5、6、7、8步骤都完成后，如果您在第 8 步骤没设置密匙没开启.config有变化就自动触发编译或者是本地获取的配置文件的话，就手动启动编译《[[启动教程](https://github.com/danshui-git/shuoming/blob/master/%E6%89%8B%E5%8A%A8%E5%BC%80%E5%A7%8B.md)]》
+- > 9、完成编译，下载固件《[固件下载教程](https://github.com/danshui-git/shuoming/blob/master/4%E5%9B%BA%E4%BB%B6%E4%B8%8B%E8%BD%BD.md)》
 #
-- > 10、完成编译，下载固件《[固件下载教程](https://github.com/danshui-git/shuoming/blob/master/4%E5%9B%BA%E4%BB%B6%E4%B8%8B%E8%BD%BD.md)》
-#
-- > 11、安装固件，安装固件时出现“Please press Enter to activate this console”就表示安装好了，出现这个就不会跑码的，稍等2-3分钟就可以在浏览器输入IP进入openwrt后台了
+- > 10、安装固件，安装固件时出现“Please press Enter to activate this console”就表示安装好了，出现这个就不会跑码的，稍等2-3分钟就可以在浏览器输入IP进入openwrt后台了
 - > 如果会跑码，就耐心等待跑码完成，大概2-3分钟就能跑完的
 #
-- > 12、下次编译，在不改变.config配置文件的情况下，就不需要再次获取了，直接启动编译就可以了，不改变配置的话，手机都可以启动编译
+- > 11、下次编译，在不改变.config配置文件的情况下，就不需要再次获取了，直接启动编译就可以了，不改变配置的话，手机都可以启动编译
 #
-- > 13、
+- > 12、
 - 《[仓库密匙获取跟使用](https://github.com/danshui-git/shuoming/blob/master/jm.md)》
 - 《[增加编译机型的方法](https://github.com/danshui-git/shuoming/blob/master/jlck.md)》
 - 《[定时触发编译说明](https://github.com/danshui-git/shuoming/blob/master/%E5%AE%9A%E6%97%B6%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E.md)》
