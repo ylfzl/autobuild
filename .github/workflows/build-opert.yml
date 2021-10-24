@@ -81,7 +81,7 @@ jobs:
         fi
         echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
         echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
-        echo "BILDYML=$(grep "compileop" -rl ./ |cut -d "/" -f9)" >> $GITHUB_ENV
+        echo "BILDYML=$(grep "compileop" -rl ${GITHUB_WORKSPACE}/.github |cut -d "/" -f9)" >> $GITHUB_ENV
         
     - name: 部署编译环境
       env:
