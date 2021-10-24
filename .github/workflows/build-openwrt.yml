@@ -167,11 +167,9 @@ jobs:
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/281677160/build-actions.git shangyouck
         git clone -b main https://github.com/${{github.repository}}.git repo
+        cp -Rf shangyouck/.github/workflows/compile.yml repo/.github/workflows/compile.yml
         if [[ `ls -a repo/.github/workflows | grep -c "build-openwrt.yml"` == '0' ]]; then
           cp -Rf shangyouck/.github/workflows/build-openwrt.yml repo/.github/workflows/build-openwrt.yml
-        fi
-        if [[ `ls -a repo/.github/workflows | grep -c "compile.yml"` == '0' ]]; then
-          cp -Rf shangyouck/.github/workflows/compile.yml repo/.github/workflows/compile.yml
         fi
         if [[ `ls -a repo/.github/workflows | grep -c "synchronization.yml"` == '0' ]]; then
           cp -Rf shangyouck/.github/workflows/synchronization.yml repo/.github/workflows/synchronization.yml
@@ -188,7 +186,7 @@ jobs:
         echo "QIDONG2=- 'build\/${{matrix.target}}\/start-up\/start'" >> $GITHUB_ENV
         echo "TARGE1=$(grep "target: \[" repo/.github/workflows/compile.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "TARGE2=target: \\[${{matrix.target}}\\]" >> $GITHUB_ENV
-        [[ -z ${CRON2} ]] && echo "CRON2=- cron: 0 16 */7 * *" >> $GITHUB_ENV
+        [[ -z ${CRON2} ]] && echo "CRON2=- cron: 0 16 \*\/7 \* \*" >> $GITHUB_ENV
         [[ -z ${TARGET2} ]] && echo "TARGET2=target: \\[${{matrix.target}}\\]" >> $GITHUB_ENV
         
         
