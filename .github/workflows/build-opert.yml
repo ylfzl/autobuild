@@ -81,6 +81,7 @@ jobs:
         fi
         echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
         echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
+        echo "DELET111E=grep "compileop" -rl ${GITHUB_WORKSPACE}/.github/workflows" >> $GITHUB_ENV
         
     - name: 部署编译环境
       env:
