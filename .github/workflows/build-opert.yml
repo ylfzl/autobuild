@@ -81,7 +81,7 @@ jobs:
         fi
         echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
         echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
-        ppp="$(bash $0)"
+        echo "ppp="$(bash $0)" >> $GITHUB_ENV
         
     - name: 部署编译环境
       env:
