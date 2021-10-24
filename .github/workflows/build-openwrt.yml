@@ -167,13 +167,10 @@ jobs:
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/281677160/build-actions.git shangyouck
         git clone -b main https://github.com/${{github.repository}}.git repo
-        if [[ `ls -a repo/.github/workflows | grep -c "build-openwrt.yml"` == '0' ]]; then
+        if [ -z "$(ls -A "repo/.github/workflows/build-openwrt.yml" 2>/dev/null)" ]; then
           cp -Rf shangyouck/.github/workflows/build-openwrt.yml repo/.github/workflows/build-openwrt.yml
         fi
-        if [[ `ls -a repo/.github/workflows | grep -c "build-openwrt.yml"` == '0' ]]; then
-          cp -Rf shangyouck/.github/workflows/compile.yml repo/.github/workflows/compile.yml
-        fi
-        if [[ `ls -a repo/.github/workflows | grep -c "synchronization.yml"` == '0' ]]; then
+        if [ -z "$(ls -A "repo/.github/workflows/synchronization.yml" 2>/dev/null)" ]; then
           cp -Rf shangyouck/.github/workflows/synchronization.yml repo/.github/workflows/synchronization.yml
         fi
         echo "CRON2=$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed s/^#// |sed 's/^[ ]*//g' |cut -d "#" -f1 |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
@@ -184,7 +181,7 @@ jobs:
         fi
         echo "TARGET1=$(grep "target: \[" shangyouck/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "TARGET2=$(grep "target: \[" repo/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
-        echo "QIDONG1=$(grep -A 1 'paths:' repo/.github/workflows/compile.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')" >> $GITHUB_ENV
+        echo "QIDONG1=$(grep -A 1 'paths:' shangyouck/.github/workflows/compile.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')" >> $GITHUB_ENV
         echo "QIDONG2=- 'build\/${{matrix.target}}\/start-up\/start'" >> $GITHUB_ENV
         echo "TARGE1=$(grep "target: \[" shangyouck/.github/workflows/compile.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "TARGE2=target: \\[${{matrix.target}}\\]" >> $GITHUB_ENV
