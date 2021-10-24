@@ -178,11 +178,11 @@ jobs:
           echo "CRON2=$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
           echo "CRON1=$(grep -A 1 'schedule:' shangyouck/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/.//' |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
         fi
-        echo "TARGET1=$(grep "target: \[" shangyouck/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
-        echo "TARGET2=$(grep "target: \[" repo/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
+        echo "TARGET1=$(grep 'target: \[' shangyouck/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
+        echo "TARGET2=$(grep 'target: \[' repo/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         
         echo "QIDONG_paths=$(grep -A 1 'paths:' repo/.github/workflows/compile.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')" >> $GITHUB_ENV
-        echo "TARGE=$(grep "target: \[" repo/.github/workflows/compile.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
+        echo "TARGE=$(grep 'target: \[' repo/.github/workflows/compile.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "TARGE2=target: \\[${{matrix.target}}\\]" >> $GITHUB_ENV
         
         
