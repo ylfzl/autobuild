@@ -201,9 +201,6 @@ jobs:
         if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/${{env.BILDYML}}" 2>/dev/null)" ]]; then
           git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/${{env.BILDYML}}
         fi
-        if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/build-openwrt.yml" 2>/dev/null)" ]]; then
-          git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/build-openwrt.yml
-        fi
         if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/compile.yml" 2>/dev/null)" ]]; then
           git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/compile.yml
         fi
