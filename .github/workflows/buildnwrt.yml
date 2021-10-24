@@ -198,10 +198,18 @@ jobs:
         sed -i "s/${{env.TARGE1}}/${{env.TARGE2}}/g" shangyouck/.github/workflows/compile.yml
         sed -i "s/${{env.QIDONG1}}/${{env.QIDONG2}}/g" shangyouck/.github/workflows/compile.yml
         cd repo
-        [[ -e "build/${{matrix.target}}/${CONFIG_FILE}" ]] && git rm -f build/${{matrix.target}}/${CONFIG_FILE}
-        [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/${{env.BILDYML}}" 2>/dev/null)" ]] && git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/${{env.BILDYML}}
-        [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/build-openwrt.yml" 2>/dev/null)" ]] && git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/build-openwrt.yml
-        [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/compile.yml" 2>/dev/null)" ]] && git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/compile.yml
+        if [[ -e "build/${{matrix.target}}/${CONFIG_FILE}" ]]; then
+          git rm -f build/${{matrix.target}}/${CONFIG_FILE}
+        fi
+        if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/${{env.BILDYML}}" 2>/dev/null)" ]]; then
+          git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/${{env.BILDYML}}
+        fi
+        if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/build-openwrt.yml" 2>/dev/null)" ]]; then
+          git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/build-openwrt.yml
+        fi
+        if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/compile.yml" 2>/dev/null)" ]]; then
+          git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/compile.yml
+        fi
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/shangyouck/.github/workflows/build-openwrt.yml .github/workflows/build-openwrt.yml
         cp -Rf $GITHUB_WORKSPACE/shangyouck/.github/workflows/compile.yml .github/workflows/compile.yml
