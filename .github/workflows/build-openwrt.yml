@@ -21,8 +21,8 @@ on:
 
 
 # 定时触发开始编译(把下面两个#去掉开启,时间设置请看定时编译说明)
-#  schedule:
-#   - cron: 0 16 */7 * *
+  schedule:
+   - cron: 0 16 */7 * *
 
 
 env: 
@@ -170,7 +170,8 @@ jobs:
         if [[ `ls -a repo/.github/workflows | grep -c "synchronization.yml"` == '0' ]]; then
           cp -Rf shangyouck/.github/workflows/synchronization.yml repo/.github/workflows/synchronization.yml
         fi
-
+        echo "CRON2=$(grep -A 1 'schedule:' repo/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed s/^#// |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
+        echo "CRON1=$(grep -A 1 'schedule:' shangyouck/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed s/^#// |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
         echo "TARGET1=$(grep 'target: \[' shangyouck/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "TARGET2=$(grep 'target: \[' repo/.github/workflows/build-openwrt.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         
