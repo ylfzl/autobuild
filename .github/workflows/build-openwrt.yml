@@ -188,6 +188,8 @@ jobs:
         echo "QIDONG2=- 'build\/${{matrix.target}}\/start-up\/start'" >> $GITHUB_ENV
         echo "TARGE1=$(grep "target: \[" repo/.github/workflows/compile.yml |grep  -v \#  |awk 'NR==1'|sed 's/^[ ]*//g' |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "TARGE2=target: \\[${{matrix.target}}\\]" >> $GITHUB_ENV
+        [[ -z ${CRON2} ]] && echo "CRON2=- cron: 0 16 */7 * *" >> $GITHUB_ENV
+        [[ -z ${TARGET2} ]] && echo "TARGET2=target: \\[Lede_source\\]" >> $GITHUB_ENV
         
         
     - name: 触发compile.yml启动"${{matrix.target}}"编译
