@@ -197,9 +197,6 @@ jobs:
         sed -i "s/${{env.TARGE1}}/${{env.TARGE2}}/g" shangyouck/.github/workflows/compile.yml
         sed -i "s/${{env.QIDONG1}}/${{env.QIDONG2}}/g" shangyouck/.github/workflows/compile.yml
         cd repo
-        git rm --cache build/${{matrix.target}}/${CONFIG_FILE}
-        git rm --cache .github/workflows/build-openwrt.yml
-        git rm --cache .github/workflows/compile.yml
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/shangyouck/.github/workflows/build-openwrt.yml .github/workflows/build-openwrt.yml
         cp -Rf $GITHUB_WORKSPACE/shangyouck/.github/workflows/compile.yml .github/workflows/compile.yml
