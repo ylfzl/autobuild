@@ -82,7 +82,7 @@ jobs:
     
     - name: 清理Actions空间
       if: env.OLDER_WORKFLOW == 'true' || (github.event.inputs.older-actions == 'true')
-      uses: MuaCat/Mattraks-delete-workflow-runs@main
+      uses: Mattraks/delete-workflow-runs@main
       with:
           token: ${{ secrets.REPO_TOKEN }}
           repository: ${{ github.repository }}
