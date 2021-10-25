@@ -87,7 +87,7 @@ jobs:
           token: ${{ secrets.REPO_TOKEN }}
           repository: ${{ github.repository }}
           keep_minimum_runs: 0
-          retain_days: 2
+          retain_days: 1
     
     - name: 删除releases,可设置保留数
       if: env.OLDER_RELEASES == 'true' || (github.event.inputs.older-releases == 'true')
