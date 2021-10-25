@@ -69,9 +69,9 @@ jobs:
         echo "TARGET1=$(grep 'target: \[' shangyou/.github/workflows/build-openwrt.yml  |sed 's/^[ ]*//g' |grep '^target' |cut -d '#' -f1 |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "TARGET2=$(grep 'target: \[' repogx/.github/workflows/build-openwrt.yml |sed 's/^[ ]*//g' |grep '^target' |cut -d '#' -f1 |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         echo "QIDONG1=$(grep -A 1 'paths:' shangyou/.github/workflows/compile.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed 's/\//\\&/g')" >> $GITHUB_ENV
-        echo "QIDONG2=- 'build\/${{matrix.target}}\/start-up\/start'" >> $GITHUB_ENV
+        echo "QIDONG2=- 'config'" >> $GITHUB_ENV
         echo "TARGE1=$(grep 'target: \[' shangyou/.github/workflows/compile.yml |sed 's/^[ ]*//g' |grep '^target' |cut -d '#' -f1 |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
-        echo "TARGE2=target: \\[${{matrix.target}}\\]" >> $GITHUB_ENV
+        echo "TARGE2=$(grep 'target: \[' repogx/.github/workflows/compile.yml |sed 's/^[ ]*//g' |grep '^target' |cut -d '#' -f1 |sed 's/\[/\\&/' |sed 's/\]/\\&/')" >> $GITHUB_ENV
         
     - name: 同步上游仓库
       if: env.REPO_TOKEN && (github.event.inputs.again-fork == 'fork')
