@@ -69,7 +69,7 @@ jobs:
         if [[ -d repogx/build/openwrt_amlogic ]];then
           rm -fr shangyou/build/openwrt_amlogic/.config
         fi
-        if [[ ! -f repogx/.github/workflows/build-openwrt.yml ]]; then
+        if [[ -z "$(ls -A "$GITHUB_WORKSPACE/repogx/.github/workflows/build-openwrt.yml" 2>/dev/null)" ]]; then
           cp -Rf shangyou/.github/workflows/build-openwrt.yml repogx/.github/workflows/build-openwrt.yml
         fi
         echo "CRON2=$(grep -A 1 'schedule:' repogx/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed s/^#// |sed 's/^[ ]*//g' |cut -d "#" -f1 |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
