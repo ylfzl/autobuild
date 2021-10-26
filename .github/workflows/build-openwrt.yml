@@ -107,7 +107,11 @@ jobs:
       working-directory: /workdir
       run: |
         git clone -b "$REPO_BRANCH" --single-branch "$REPO_URL" openwrt > /dev/null 2>&1
+        git clone -b main https://github.com/281677160/autobuild shangyouck > /dev/null 2>&1
+        git clone -b main https://github.com/${{github.repository}} repo > /dev/null 2>&1
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        ln -sf /workdir/shangyouck $GITHUB_WORKSPACE/shangyouck
+        ln -sf /workdir/repo $GITHUB_WORKSPACE/repo
         cd $GITHUB_WORKSPACE/openwrt
         ./scripts/feeds update -a > /dev/null 2>&1
         echo "Home=${GITHUB_WORKSPACE}/openwrt" >> $GITHUB_ENV
@@ -174,8 +178,6 @@ jobs:
       if: steps.compileop.outputs.status == 'success' && env.REPO_TOKEN
       run: |
         cd $GITHUB_WORKSPACE
-        git clone -b main https://github.com/281677160/build-actions.git shangyouck
-        git clone -b main https://github.com/${{github.repository}}.git repo
         echo "CRON2=$(grep -A 1 'schedule:' $GITHUB_WORKSPACE/.github/workflows/${{env.BILDYML}} |awk 'NR==2' |sed 's/^[ ]*//g' |sed s/^#// |sed 's/^[ ]*//g' |cut -d "#" -f1 |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
         echo "CRON1=$(grep -A 1 'schedule:' shangyouck/.github/workflows/build-openwrt.yml |awk 'NR==2' |sed 's/^[ ]*//g' |sed s/^#// |sed 's/^[ ]*//g' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
         if [[ `grep 'cron:' $GITHUB_WORKSPACE/.github/workflows/${{env.BILDYML}} |sed 's/^[ ]*//g' |grep '^-\ cron'` ]]; then
@@ -209,6 +211,10 @@ jobs:
         fi
         if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repo/.github/workflows/synchronization.yml" 2>/dev/null)" ]]; then
           git rm -f $GITHUB_WORKSPACE/repo/.github/workflows/synchronization.yml
+        fi
+        if [[ ! -d $GITHUB_WORKSPACE/repo/.github/workflows ]]; then
+          mkdir -p $GITHUB_WORKSPACE/repo/.github/workflows
+          chmod -R +x $GITHUB_WORKSPACE/repo/.github/workflows
         fi
         cp -Rf $GITHUB_WORKSPACE/${CONFIG_FILE} build/${{matrix.target}}/${CONFIG_FILE}
         cp -Rf $GITHUB_WORKSPACE/shangyouck/.github/workflows/build-openwrt.yml .github/workflows/build-openwrt.yml
