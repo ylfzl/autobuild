@@ -59,10 +59,17 @@ jobs:
         if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repogx/.github/workflows/compile.yml" 2>/dev/null)" ]]; then
           git rm -f $GITHUB_WORKSPACE/repogx/.github/workflows/compile.yml
         fi
+        cp -Rf $GITHUB_WORKSPACE/shangyou/.github/workflows/compile.yml .github/workflows/compile.yml
         if [[ -n "$(ls -A "$GITHUB_WORKSPACE/repogx/.github/workflows/build-openwrt.yml" 2>/dev/null)" ]]; then
           git rm -f $GITHUB_WORKSPACE/repogx/.github/workflows/build-openwrt.yml
         fi
+        cp -Rf $GITHUB_WORKSPACE/shangyou/.github/workflows/build-openwrt.yml .github/workflows/build-openwrt.yml
+        cd shangyou
+        git add .
+        git commit -m "同步上游281677160/build-actions于$(date +%Y年%m月%d号%H时%M分%S秒)" |tee build.log
         git rm -f $GITHUB_WORKSPACE/repogx/.github/workflows/${{env.BILDYML}}
+        cd $GITHUB_WORKSPACE
+        cp -Rf $GITHUB_WORKSPACE/shangyou/.github/workflows/synchronization.yml .github/workflows/synchronization.yml
         cp -Rf $GITHUB_WORKSPACE/repogx/build/* shangyou/build
         cp -Rf $GITHUB_WORKSPACE/repogx/.github/* shangyou/.github
         cd shangyou
