@@ -26,7 +26,10 @@ on:
         description: '保留[X]个Releases不被删除(可改)'
         required: true
         default: '10'
-
+      rele1:
+        description: '${{matrix.target}}'
+        required: true
+        default: '10'
 
 # 定时触发开始编译(把下面两个#去掉开启,时间设置请看定时编译说明)
 #  schedule:
@@ -46,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Lienol_source]
+        target: [Lede_source]
 
         # [Lede_source,Lienol_source,Mortal_source,Tianling_source,openwrt_amlogic]
 
