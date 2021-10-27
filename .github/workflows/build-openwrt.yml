@@ -93,6 +93,10 @@ jobs:
           echo "CODE=Mortal" >> $GITHUB_ENV
         fi
         
+    - name: 读取扩展文件
+      run: |
+        source $GITHUB_WORKSPACE/123.sh
+        
     - name: 部署编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
