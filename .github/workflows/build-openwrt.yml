@@ -235,6 +235,7 @@ jobs:
           sed -i "s/${{env.QIDONG1}}/${{env.QIDONG2}}/g" shangyouck/.github/workflows/compile.yml
         fi
         if [[ `grep -c "weixin4.png" repo/README.md` == '0' ]]; then
+          git rm -rf $GITHUB_WORKSPACE/repo/README.md
           cp -Rf $GITHUB_WORKSPACE/shangyouck/README.md $GITHUB_WORKSPACE/repo
         fi
         cd repo
