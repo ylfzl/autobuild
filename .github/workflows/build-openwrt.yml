@@ -68,10 +68,12 @@ jobs:
         echo "SERVERCHAN_SCKEY=${SERVERCHAN_SCKEY}" >> $GITHUB_ENV
         echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
         
-
-    - name: 读取脚本设置
+    - name: 生成"${{matrix.target}}"配置文件
+      id: compile
+      continue-on-error: true
       run: |
         source 123.sh
+        echo "::set-output name=status::success"
 
     - name: 读取扩展文件
       run: |
@@ -228,7 +230,7 @@ jobs:
         
     - name: 清理Actions空间
       continue-on-error: true
-      if: env.REPO_TOKEN
+      if: steps.compile.outputs.status == 'success' && env.REPO_TOKEN
       uses: Mattraks/delete-workflow-runs@main
       with:
           token: ${{ secrets.REPO_TOKEN }}
