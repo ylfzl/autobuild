@@ -67,8 +67,15 @@ jobs:
         echo "UPLOAD_CONFIG=${UPLOAD_CONFIG}" >> $GITHUB_ENV
         echo "SERVERCHAN_SCKEY=${SERVERCHAN_SCKEY}" >> $GITHUB_ENV
         echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
+        
+
+    - name: 读取脚本设置
+      continue-on-error: true
+      run: |
+        source 123.sh
 
     - name: 读取扩展文件
+      continue-on-error: true
       run: |
         echo
         git clone --depth 1 -b main https://github.com/281677160/common build/common > /dev/null 2>&1
