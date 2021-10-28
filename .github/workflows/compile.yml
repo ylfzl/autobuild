@@ -16,7 +16,7 @@ on:
     branches:
       - main
     paths:
-      - 'config'
+      - 'build/Lede_source/start-up/start'
 
 env:
   Github: https://github.com/${{github.repository}}
@@ -183,6 +183,7 @@ jobs:
         fi
         
     - name: 编译信息
+      continue-on-error: true
       run: |
         cd openwrt
         source "${PATH1}/common.sh" && Diy_chuli > /dev/null 2>&1
