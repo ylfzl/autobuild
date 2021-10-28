@@ -101,7 +101,7 @@ jobs:
         fi
         
     - name: 清理Actions空间
-      if: steps.compile.outputs.status == 'success' && env.REPO_TOKEN
+      if: env.REPO_TOKEN
       uses: Mattraks/delete-workflow-runs@main
       with:
           token: ${{ secrets.REPO_TOKEN }}
