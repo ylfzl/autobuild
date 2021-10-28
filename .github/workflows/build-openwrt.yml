@@ -196,8 +196,7 @@ jobs:
         cd openwrt
         source "${PATH1}/common.sh" && Diy_chuli > /dev/null 2>&1
         if [ "${BY_INFORMATION}" == "true" ]; then
-          source "${PATH1}/com.sh" && GET_TARGET_INFO
-          source "${PATH1}/common.sh" && Diy_xinxi
+          /bin/bash {PATH1}/com.sh
         fi
         
     - name: 同步上游compile.yml和build-openwrt.yml文件
