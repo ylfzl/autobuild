@@ -194,7 +194,6 @@ jobs:
     - name: 编译信息
       run: |
         cd openwrt
-        source "${PATH1}/common.sh" && Diy_chuli > /dev/null 2>&1
         source "${PATH1}/upgrade.sh" && GET_TARGET_INFO
     
     
