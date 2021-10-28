@@ -191,12 +191,6 @@ jobs:
         name: .config_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: config.txt
         
-    - name: 编译信息
-      run: |
-        cd openwrt
-        source "${PATH1}/upgrade.sh" && GET_TARGET_INFO
-    
-    
     - name: 同步上游compile.yml和build-openwrt.yml文件
       if: steps.compileop.outputs.status == 'success' && env.REPO_TOKEN
       run: |
@@ -244,6 +238,16 @@ jobs:
         git add .
         git commit -m "编译${{env.CODE}}-${{env.TARGET_PROFILE}}固件"
         git push --force "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
+        
+    - name: 编译信息
+      continue-on-error: true
+      run: |
+        cd openwrt
+        source "${PATH1}/common.sh" && Diy_chuli > /dev/null 2>&1
+        if [ "${BY_INFORMATION}" == "true" ]; then
+          source "${PATH1}/upgrade.sh" && GET_TARGET_INFO
+          source "${PATH1}/common.sh" && Diy_xinxi
+        fi
     
     - name: 清理Actions空间
       if: env.REPO_TOKEN
