@@ -56,8 +56,6 @@ jobs:
       matrix:
         target: [Lede_source]
 
-        steps:
-
     steps:
     - name: 准备结束
       uses: actions/checkout@v2
