@@ -226,7 +226,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         if [[ -n "${{env.N1BUG1}}" ]] && [[ -n "${{env.N1BUG2}}" ]]; then
-          sed -i "s/${{env.N1BUG1}}/${{env.N1BUG2}}/g" $GITHUB_WORKSPACE/repo/build/openwrt_amlogic/settings.ini
+          sed -i "s/${{env.N1BUG1}}/${{env.N1BUG2}}/g" repo/build/openwrt_amlogic/settings.ini
         fi
         if [[ -n "${{env.QDMAME1}}" ]] && [[ -n "${{env.QDMAME2}}" ]]; then
           sed -i "s/${{env.QDMAME1}}/${{env.QDMAME2}}/g" shangyouck/.github/workflows/build-openwrt.yml
