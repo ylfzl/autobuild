@@ -57,5 +57,3 @@ sed -i 's/"Argon 主题设置"/"Argon设置"/g' `grep "Argon 主题设置" -rl .
 export CLEAR2="openwrt-x86-64-generic-kernel.bin"
 export CLEAR3="sha256sums"
 export CLEAR4="x86-64-generic-squashfs-rootfs"
-export CLEAR5=""
-export CLEAR6=""
