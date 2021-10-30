@@ -116,6 +116,17 @@ jobs:
           echo "OpenWrt_name=21.02" >> $GITHUB_ENV
         fi
         
+    - name: 生成Diy_Arrange
+      run: |
+        cd openwrt
+        source ${GITHUB_WORKSPACE}/build/common/common.sh" && Diy_Arrange
+        
+    - name: 上传固件在 github actions
+      uses: actions/upload-artifact@v2
+      with:
+        name: OpenWrt_name
+        path: bin/targets/x86/64
+        
     - name: 部署编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
