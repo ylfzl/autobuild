@@ -116,16 +116,6 @@ jobs:
           echo "OpenWrt_name=21.02" >> $GITHUB_ENV
         fi
         
-    - name: 生成Diy_Arrange
-      run: |
-        source ${GITHUB_WORKSPACE}/build/common/common.sh && Diy_Arrange
-        
-    - name: 上传固件在 github actions
-      uses: actions/upload-artifact@v2
-      with:
-        name: OpenWrt_name
-        path: bin/targets/x86/64
-        
     - name: 部署编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -176,6 +166,17 @@ jobs:
       env:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        
+    - name: 生成Diy_Arrange
+      run: |
+        cd openwrt
+        source "${PATH1}/common.sh" && Diy_Arrange
+        
+    - name: 上传固件在 github actions
+      uses: actions/upload-artifact@v2
+      with:
+        name: OpenWrt_name
+        path: openwrt/bin/targets/x86/64
 
     - name: 生成"${{matrix.target}}"配置文件
       id: compileop
