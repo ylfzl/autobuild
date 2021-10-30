@@ -219,6 +219,11 @@ jobs:
         echo "QDMAME1=$(sed -n '1,50p' shangyouck/.github/workflows/build-openwrt.yml |grep '^name' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
         echo "QDMAME2=$(sed -n '1,50p' $GITHUB_WORKSPACE/.github/workflows/${{env.BILDYML}} |grep '^name' |sed 's/\//\\&/g' |sed 's/\*/\\&/g')" >> $GITHUB_ENV
         echo "N1BUG1=$(sed -n '13p' $GITHUB_WORKSPACE/openwrt/build/openwrt_amlogic/settings.ini |grep 'BY_INFORMATION')" >> $GITHUB_ENV
+        if [[ `grep -c "${GITHUB_WORKSPACE}/Clear" $GITHUB_WORKSPACE/repo/build/*/diy-part.sh` == '0' ]]; then
+          echo "GONGGAO1=编译${{env.TARGET_PROFILE}}固件(diy-part.sh有更新,注意查看)" >> $GITHUB_ENV
+        else
+          echo "GONGGAO1=编译${{env.CODE}}-${{env.TARGET_PROFILE}}固件" >> $GITHUB_ENV
+        fi
     
     - name: 触发compile.yml启动"${{matrix.target}}"编译
       if: steps.compileop.outputs.status == 'success' && env.REPO_TOKEN
@@ -267,7 +272,7 @@ jobs:
         mkdir -p build/${{matrix.target}}/start-up
         echo "${{env.CODE}}于$(date +%Y年%m月%d号%H时%M分%S秒)自动触发编译${{env.TARGET_PROFILE}}固件" > build/${Modelfile}/start-up/start
         git add .
-        git commit -m "编译${{env.CODE}}-${{env.TARGET_PROFILE}}固件"
+        git commit -m "${{env.GONGGAO1}}"
         git push --force "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
         
     - name: 编译信息
