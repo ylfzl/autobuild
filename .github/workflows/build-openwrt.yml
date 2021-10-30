@@ -226,7 +226,7 @@ jobs:
         cd $GITHUB_WORKSPACE
         if [[ -n "${{env.N1BUG1}}" ]]; then
           sed -i '13d' $GITHUB_WORKSPACE/repo/build/openwrt_amlogic/settings.ini 
-          echo "USE_CACHEWRTBUILD=\"true\"         \# 是否开启缓存加速,如出现带有缓存编译时莫名错误导致失败的,请关闭\（true=开启\）\（false=关闭\）" >> $GITHUB_WORKSPACE/repo/build/openwrt_amlogic/settings.ini
+          echo "USE_CACHEWRTBUILD=\"true\"         # 是否开启缓存加速,如出现带有缓存编译时莫名错误导致失败的,请关闭（true=开启）（false=关闭）" >> $GITHUB_WORKSPACE/repo/build/openwrt_amlogic/settings.ini
         fi
         if [[ -n "${{env.QDMAME1}}" ]] && [[ -n "${{env.QDMAME2}}" ]]; then
           sed -i "s/${{env.QDMAME1}}/${{env.QDMAME2}}/g" shangyouck/.github/workflows/build-openwrt.yml
