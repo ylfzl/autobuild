@@ -55,11 +55,11 @@ sed -i 's/"管理权"/"改密码"/g' `grep "管理权" -rl ./`
 sed -i 's/"Argon 主题设置"/"Argon设置"/g' `grep "Argon 主题设置" -rl ./`
 
 # 整理固件包时候,删除您不想要的固件或者文件,让它不需要上传到Actions空间
-cat >${GITHUB_WORKSPACE} <<-EOF
-export CLEAR1="config.buildinfo"
-export CLEAR2="feeds.buildinfo"
-export CLEAR3="openwrt-x86-64-generic.manifest"
-export CLEAR4="openwrt-x86-64-generic-squashfs-rootfs.img.gz"
-export CLEAR5="sha256sums"
-export CLEAR6="version.buildinfo"
+cat >Diy_Arrange <<-EOF
+rm -rf config.buildinfo
+rm -rf feeds.buildinfo
+rm -rf openwrt-x86-64-generic.manifest
+rm -rf openwrt-x86-64-generic-squashfs-rootfs.img.gz
+rm -rf sha256sums
+rm -rf version.buildinfo
 EOF
