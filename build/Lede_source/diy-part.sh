@@ -52,3 +52,10 @@ sed -i 's/"Web 管理"/"Web"/g' `grep "Web 管理" -rl ./`
 sed -i 's/"管理权"/"改密码"/g' `grep "管理权" -rl ./`
 sed -i 's/"带宽监控"/"监控"/g' `grep "带宽监控" -rl ./`
 sed -i 's/"Argon 主题设置"/"Argon设置"/g' `grep "Argon 主题设置" -rl ./`
+
+# 整理固件包时候,删除您不想要的固件或者文件
+export CLEAR1="config.buildinfo"
+export CLEAR2="openwrt-x86-64-generic-kernel.bin"
+CLEAR3="sha256sums"
+CLEAR4="x86-64-generic-squashfs-rootfs"
+CLEAR5=""
