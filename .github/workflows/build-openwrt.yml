@@ -188,20 +188,6 @@ jobs:
         else
           echo "TARGET_PROFILE=armvirt" >> $GITHUB_ENV
         fi
-        echo "${CLEAR1}"
-        echo "${CLEAR2}"
-        
-        
-    - name: 生成Diy_Arrange
-      run: |
-        cd openwrt
-        source "${PATH1}/common.sh" && Diy_Arrange
-        
-    - name: 上传固件在 github actions
-      uses: actions/upload-artifact@v2
-      with:
-        name: OpenWrt_name
-        path: openwrt/bin/targets/x86/64
         
     - name: 上传.config配置文件在 github actions
       if: env.UPLOAD_CONFIG == 'true'
