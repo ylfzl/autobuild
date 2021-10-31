@@ -221,7 +221,7 @@ jobs:
         echo "N1BUG1=$(sed -n '13p' $GITHUB_WORKSPACE/openwrt/build/openwrt_amlogic/settings.ini |grep 'BY_INFORMATION')" >> $GITHUB_ENV
         
         
-        if [[ `grep -c "${GITHUB_WORKSPACE}/Clear" $GITHUB_WORKSPACE/openwrt/build/openwrt_amlogic/diy-part.sh` == '0' ]]; then
+        if [[ `grep -c "${GITHUB_WORKSPACE}/Clear" $GITHUB_WORKSPACE/openwrt/build/${{matrix.target}}/diy-part.sh` == '0' ]]; then
         echo '
           # 整理固件包时候,删除您不想要的固件或者文件,让它不需要上传到Actions空间
           cat >${GITHUB_WORKSPACE}/Clear <<-EOF
@@ -230,7 +230,7 @@ jobs:
           rm -rf sha256sums
           rm -rf version.buildinfo
           EOF
-          ' >> $GITHUB_WORKSPACE/openwrt/build/openwrt_amlogic/diy-part.sh
+          ' >> $GITHUB_WORKSPACE/openwrt/build/${{matrix.target}}/diy-part.sh
           echo "GONGGAO1=(diy-part.sh更新删除上传时不要的文件,注意查看)编译${{env.TARGET_PROFILE}}固件" >> $GITHUB_ENV
         else
           echo "GONGGAO1=编译${{env.CODE}}-${{env.TARGET_PROFILE}}固件" >> $GITHUB_ENV
