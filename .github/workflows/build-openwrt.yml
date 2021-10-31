@@ -231,7 +231,7 @@ jobs:
           rm -rf version.buildinfo
           EOF
           ' >> $GITHUB_WORKSPACE/openwrt/build/openwrt_amlogic/diy-part.sh
-          echo "GONGGAO1=编译${{env.TARGET_PROFILE}}固件(diy-part.sh有更新,注意查看)" >> $GITHUB_ENV
+          echo "GONGGAO1=(diy-part.sh更新删除上传时不要的文件,注意查看)编译${{env.TARGET_PROFILE}}固件" >> $GITHUB_ENV
         else
           echo "GONGGAO1=编译${{env.CODE}}-${{env.TARGET_PROFILE}}固件" >> $GITHUB_ENV
         fi
@@ -284,7 +284,7 @@ jobs:
         mkdir -p build/${{matrix.target}}/start-up
         echo "${{env.CODE}}于$(date +%Y年%m月%d号%H时%M分%S秒)自动触发编译${{env.TARGET_PROFILE}}固件" > build/${Modelfile}/start-up/start
         git add .
-        git commit -m "编译${{env.CODE}}-${{env.TARGET_PROFILE}}固件"
+        git commit -m "${{env.GONGGAO1}}"
         git push --force "https://${{ secrets.REPO_TOKEN }}@github.com/${{github.repository}}" HEAD:main
         
     - name: 编译信息
