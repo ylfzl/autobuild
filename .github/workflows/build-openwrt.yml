@@ -232,7 +232,7 @@ jobs:
           echo "GONGGAO1=(diy-part.sh更新,注意查看固件包减负说明)编译${{env.TARGET_PROFILE}}固件" >> $GITHUB_ENV
         else
           echo "GONGGAO1=编译${{env.CODE}}-${{env.TARGET_PROFILE}}固件" >> $GITHUB_ENV
-        fi 
+        fi
     
     - name: 触发compile.yml启动"${{matrix.target}}"编译
       if: steps.compileop.outputs.status == 'success' && env.REPO_TOKEN
