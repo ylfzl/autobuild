@@ -16,7 +16,7 @@ on:
     branches:
       - main
     paths:
-      - 'build/openwrt_amlogic/start-up/start'
+      - 'build/Lede_source/start-up/start'
 
 env:
   Github: https://github.com/${{github.repository}}
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [openwrt_amlogic]
+        target: [Lede_source]
         
         # [Lede_source,Lienol_source,Mortal_source,Tianling_source,openwrt_amlogic]
 
@@ -217,6 +217,9 @@ jobs:
     - name: 整理固件文件夹
       id: organizer
       run: |
+        if [ "${AUTOMATIC_AMLOGIC}" == "true" ]; then
+          source "${PATH1}/common.sh" && Diy_amlogic
+        fi
         cd openwrt
         cp -Rf bin/targets/*/* "${Home}"/upgrade
         cd bin/targets/*/*
@@ -237,12 +240,6 @@ jobs:
       with:
         name: ${{ env.OpenWrt_name }}-${{ env.CODE }}-${{ env.TARGET_PROFILE }}-firmware-${{ env.Compile_Date }}
         path: ${{ env.FIRMWARE }}
-        
-    - name: 整理固件文件夹
-      run: |
-        if [ "${AUTOMATIC_AMLOGIC}" == "true" ]; then
-          source "${PATH1}/common.sh" && Diy_amlogic
-        fi
     
     - name: 上传固件到「奶牛快传」和「WeTransfer」
       if: steps.organizer.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true'
