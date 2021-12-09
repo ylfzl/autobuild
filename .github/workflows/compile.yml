@@ -122,6 +122,10 @@ jobs:
             sudo -E apt-get remove -y --purge azure-cli ghc zulu* hhvm llvm* firefox google* dotnet* powershell mysql* php* mssql-tools msodbcsql17 android*
             sudo rm -rf /etc/mysql /etc/php /swapfile
         fi
+        
+    - name: 加载源,补丁和自定义设置
+      run: |
+        df -hT $PWD
     
     - name: 下载"${{matrix.target}}"源码
       working-directory: /${{matrix.target}}
