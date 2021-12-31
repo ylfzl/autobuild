@@ -16,7 +16,7 @@ on:
     branches:
       - main
     paths:
-      - 'config'
+      - 'build/Tianling_source/start-up/start'
 
 env:
   Github: https://github.com/${{github.repository}}
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Mortal_source,Tianling_source,Lienol_source]
+        target: [Tianling_source]
         
         # [Lede_source,Lienol_source,Mortal_source,Tianling_source,openwrt_amlogic]
 
@@ -129,6 +129,7 @@ jobs:
       run: |
         git clone -b "$REPO_BRANCH" --single-branch "$REPO_URL" openwrt
         cd openwrt
+        ./scripts/feeds clean
         ./scripts/feeds update -a > /dev/null 2>&1
         ln -sf /${{matrix.target}}/openwrt $GITHUB_WORKSPACE/openwrt
         echo "Home=${GITHUB_WORKSPACE}/openwrt" >> $GITHUB_ENV
