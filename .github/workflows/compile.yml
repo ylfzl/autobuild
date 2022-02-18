@@ -16,7 +16,7 @@ on:
     branches:
       - main
     paths:
-      - 'build/Lede_source/start-up/start'
+      - 'config'
 
 env:
   Github: https://github.com/${{github.repository}}
@@ -81,10 +81,10 @@ jobs:
           echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
           echo "CODE=Lede" >> $GITHUB_ENV
           echo "OpenWrt_name=18.06" >> $GITHUB_ENV
-        elif [[ "${REPO_BRANCH}" == "21.02" ]]; then
+        elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
           echo "ZZZ=package/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
           echo "CODE=Lienol" >> $GITHUB_ENV
-          echo "OpenWrt_name=21.02" >> $GITHUB_ENV
+          echo "OpenWrt_name=19.07" >> $GITHUB_ENV
         elif [[ "${REPO_BRANCH}" == "openwrt-18.06" ]]; then
           echo "ZZZ=package/emortal/default-settings/files/99-default-settings" >> $GITHUB_ENV
           echo "CODE=Tianling" >> $GITHUB_ENV
@@ -145,7 +145,7 @@ jobs:
         cd openwrt
         if [[ "${REPO_BRANCH}" == "master" ]]; then
           source "${PATH1}/common.sh" && Diy_lede
-        elif [[ "${REPO_BRANCH}" == "21.02" ]]; then
+        elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
           source "${PATH1}/common.sh" && Diy_lienol
         elif [[ "${REPO_BRANCH}" == "openwrt-18.06" ]]; then
           source "${PATH1}/common.sh" && Diy_Tianling
@@ -268,8 +268,7 @@ jobs:
         echo "##### 奶牛快传：$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> update_log.txt
         sed -i "s/Download Link/奶牛快传/g" cowtransfer.log
         echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        
-        
+
     - name: 上传固件到「WeTransfer」
       if: steps.organizer.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true'
       run: |
@@ -278,7 +277,6 @@ jobs:
         echo "##### WETRANSFER：$(cat wetransfer.log | grep https | cut -f3 -d" ")" >> update_log.txt
         sed -i "s/Download Link/WETRANSFER/g" wetransfer.log
         echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
-        
     
     - name: 发布固件
       if: steps.organizer.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && env.REPO_TOKEN
