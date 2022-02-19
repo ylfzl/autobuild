@@ -163,8 +163,8 @@ jobs:
         fi
         
     - name: 打包N1固件
+      if: env.AUTOMATIC_AMLOGIC == 'true'
       run: |
-        if: env.AUTOMATIC_AMLOGIC == 'true'
         source "${PATH1}/common.sh" && Diy_amlogic
         
     - name: SSH远程连接（制作.config配置文件）
