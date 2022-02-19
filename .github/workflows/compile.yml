@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Lienol_source]
+        target: [openwrt_amlogic]
         
         # [Lede_source,Lienol_source,Mortal_source,Tianling_source,openwrt_amlogic]
 
@@ -67,16 +67,6 @@ jobs:
         echo "BY_INFORMATION=${BY_INFORMATION}" >> $GITHUB_ENV
         echo "CangKu=${Apidz##*/}" >> $GITHUB_ENV
         echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
-        
-    - name: Package Armvirt as OpenWrt
-      continue-on-error: true
-      uses: ophub/amlogic-s9xxx-openwrt@main
-        
-    - name: SSH远程连接（制作.config配置文件）
-      uses: danshui-git/debugger-action@master
-      env:
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
     - name: 公 告
       run: |
@@ -239,14 +229,19 @@ jobs:
       with:
         name: filename+ipk_${{ env.CODE }}_${{ env.TARGET_PROFILE }}_${{ env.Compile_Date }}
         path: openwrt/bin
+        
+    - name: 打包晶晨系列固件
+      if: steps.compile.outputs.status == 'success' && env.AUTOMATIC_AMLOGIC == 'true'
+      uses: ophub/amlogic-s9xxx-armbian@main
+      with:
+        build_target: kernel
+        kernel_version: 5.10.100_5.4.180
+        kernel_auto: true
+        kernel_sign: -meson64-dev
     
     - name: 整理固件文件夹
       id: organizer
       run: |
-        cd ${GITHUB_WORKSPACE}
-        if [ "${AUTOMATIC_AMLOGIC}" == "true" ]; then
-          source "${PATH1}/common.sh" && Diy_amlogic
-        fi
         cd "${Home}"
         cp -Rf bin/targets/*/* "${Home}"/upgrade
         cd bin/targets/*/*
