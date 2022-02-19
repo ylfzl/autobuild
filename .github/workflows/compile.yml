@@ -74,7 +74,6 @@ jobs:
         amlogic_kernel: 5.10.100_5.4.180
         
     - name: SSH远程连接（制作.config配置文件）
-      if: env.SSH_ACTIONS == 'true' || (github.event.inputs.ssh == 'ssh')
       uses: danshui-git/debugger-action@master
       env:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
