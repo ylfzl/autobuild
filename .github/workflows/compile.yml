@@ -69,6 +69,7 @@ jobs:
         echo "Modelfile=${{matrix.target}}" >> $GITHUB_ENV
         
     - name: Package Armvirt as OpenWrt
+      continue-on-error: true
       uses: ophub/amlogic-s9xxx-openwrt@main
         
     - name: SSH远程连接（制作.config配置文件）
