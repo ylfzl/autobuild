@@ -70,8 +70,6 @@ jobs:
         
     - name: Package Armvirt as OpenWrt
       uses: ophub/amlogic-s9xxx-openwrt@main
-      with:
-        amlogic_kernel: 5.10.100_5.4.180
         
     - name: SSH远程连接（制作.config配置文件）
       uses: danshui-git/debugger-action@master
