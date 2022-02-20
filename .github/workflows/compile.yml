@@ -161,17 +161,6 @@ jobs:
         if [[ "${REGULAR_UPDATE}" == "true" ]]; then
           source "${PATH1}/upgrade.sh" && Diy_Part1
         fi
-        
-    - name: 打包N1固件
-      if: env.AUTOMATIC_AMLOGIC == 'true'
-      run: |
-        source "${PATH1}/common.sh" && Diy_amlogic
-        
-    - name: SSH远程连接（制作.config配置文件）
-      uses: danshui-git/debugger-action@master
-      env:
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
     
     - name: 缓存加速(7天内对应源码相同机型二次编译有效，每次只保留一个源码的缓存)
       if: env.USE_CACHEWRTBUILD == 'true'
@@ -242,9 +231,15 @@ jobs:
         path: openwrt/bin
         
     - name: 打包N1固件
+      if: steps.compile.outputs.status == 'success' && env.AUTOMATIC_AMLOGIC == 'true'
       run: |
-        if: steps.compile.outputs.status == 'success' && env.AUTOMATIC_AMLOGIC == 'true'
-        source "${PATH1}/common.sh" && Diy_amlogic
+        git clone --depth 1 https://github.com/ophub/amlogic-s9xxx-openwrt.git amlogic
+        [ -d amlogic/openwrt-armvirt ] || mkdir -p amlogic/openwrt-armvirt
+        cp -f ${Home}/bin/targets/*/*/*.tar.gz amlogic/openwrt-armvirt/ && sync
+        cd amlogic
+        sudo chmod +x make
+        sudo ./make -d -b s905x3_s905x2_s905x_s905w_s905d_s922x_s912 -k 5.10.100_5.4.180 -a true
+        mv -f $GITHUB_WORKSPACE/amlogic/out/* ${Home}/bin/targets/armvirt/64/
     
     - name: 整理固件文件夹
       id: organizer
