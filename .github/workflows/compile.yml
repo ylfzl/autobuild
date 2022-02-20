@@ -233,6 +233,7 @@ jobs:
     - name: 打包N1固件
       if: steps.compile.outputs.status == 'success' && env.AUTOMATIC_AMLOGIC == 'true'
       run: |
+        cd $GITHUB_WORKSPACE
         git clone --depth 1 https://github.com/ophub/amlogic-s9xxx-openwrt.git amlogic
         [ -d amlogic/openwrt-armvirt ] || mkdir -p amlogic/openwrt-armvirt
         cp -f ${Home}/bin/targets/*/*/*.tar.gz amlogic/openwrt-armvirt/ && sync
