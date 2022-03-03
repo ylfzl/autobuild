@@ -39,10 +39,6 @@ on:
 
 
 env:
-  # 如果多开build-openwrt.yml，请修改如下变量
-  BILDYML: build-openwrt.yml
-  # 多开build-openwrt.yml时把上面build-openwrt.yml改成其他的名称，但是同步你的文件名称
-
   Github: https://github.com/${{github.repository}}
   Author: ${{github.actor}}
   Apidz: ${{github.repository}}
@@ -95,6 +91,7 @@ jobs:
         echo
         git clone --depth 1 -b main https://github.com/281677160/common build/common > /dev/null 2>&1
         chmod -R +x "${GITHUB_WORKSPACE}/build/common"
+        echo "BILDYML=$(grep "compileop" -rl ${GITHUB_WORKSPACE}/.github |cut -d "/" -f9)" >> $GITHUB_ENV
         echo "NETIP=package/base-files/files/etc/networkip" >> $GITHUB_ENV
         echo "DELETE=package/base-files/files/etc/deletefile" >> $GITHUB_ENV
         if [[ "${Modelfile}" == "openwrt_amlogic" ]]; then
@@ -105,10 +102,10 @@ jobs:
           echo "ZZZ=package/lean/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
           echo "CODE=Lede" >> $GITHUB_ENV
           echo "OpenWrt_name=18.06" >> $GITHUB_ENV
-        elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
+        elif [[ "${REPO_BRANCH}" == "main" ]]; then
           echo "ZZZ=package/default-settings/files/zzz-default-settings" >> $GITHUB_ENV
           echo "CODE=Lienol" >> $GITHUB_ENV
-          echo "OpenWrt_name=19.07" >> $GITHUB_ENV
+          echo "OpenWrt_name=20.06" >> $GITHUB_ENV
         elif [[ "${REPO_BRANCH}" == "openwrt-18.06" ]]; then
           echo "ZZZ=package/emortal/default-settings/files/99-default-settings" >> $GITHUB_ENV
           echo "CODE=Tianling" >> $GITHUB_ENV
@@ -149,7 +146,7 @@ jobs:
         cd openwrt
         if [[ "${REPO_BRANCH}" == "master" ]]; then
           source "${PATH1}/common.sh" && Diy_lede
-        elif [[ "${REPO_BRANCH}" == "19.07" ]]; then
+        elif [[ "${REPO_BRANCH}" == "main" ]]; then
           source "${PATH1}/common.sh" && Diy_lienol
         elif [[ "${REPO_BRANCH}" == "openwrt-18.06" ]]; then
           source "${PATH1}/common.sh" && Diy_Tianling
