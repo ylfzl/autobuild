@@ -41,7 +41,7 @@ on:
 env:
   # 如果多开build-openwrt.yml，请修改如下变量
   BILDYML: build-openwrt.yml
-  # 多开build-openwrt.yml时把上面build-openwrt.yml改成其他的名称
+  # 多开build-openwrt.yml时把上面build-openwrt.yml改成其他的名称，但是同步你的文件名称
 
   Github: https://github.com/${{github.repository}}
   Author: ${{github.actor}}
