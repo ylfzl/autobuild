@@ -106,7 +106,7 @@ jobs:
     - name: 上传固件到「奶牛快传
       run: |
         curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --cookie="remember-mev2=...;" -a "MTUwODkyODY2MjY6MTY0ODEyNzk4ODE1NDo2ZmNlNGYyMTIxNGIyMjBhMTg0ZWRmYWQxNzQ1MWRlZA" ${GITHUB_WORKSPACE}/Github_Tags 2>&1 | tee cowtransfer.log
+        ./transfer cow --cookie="MTUwODkyODY2MjY6MTY0ODEyNzk4ODE1NDo2ZmNlNGYyMTIxNGIyMjBhMTg0ZWRmYWQxNzQ1MWRlZA" ${GITHUB_WORKSPACE}/Github_Tags 2>&1 | tee cowtransfer.log
         sed -i "s/Download Link/奶牛快传/g" cowtransfer.log
         echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
 
