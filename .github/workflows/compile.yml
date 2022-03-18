@@ -208,6 +208,12 @@ jobs:
           source "${PATH1}/common.sh" && Diy_xinxi
         fi
         
+    - name: 编译信息
+      continue-on-error: true
+      run: |
+        echo "Free space:"
+        df -h
+        
     - name: 启用在线更新
       continue-on-error: true
       if: env.REGULAR_UPDATE == 'true' && env.REPO_TOKEN
